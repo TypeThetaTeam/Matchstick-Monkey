@@ -1,0 +1,146 @@
+{%- comment -%}
+  Inventory Status Display
+  Shows stock levels and incoming inventory
+{%- endcomment -%}
+
+{%- liquid
+  assign show_inventory = false
+  assign inventory_message = ''
+  
+  if variant.inventory_management and variant.inventory_policy == 'deny'
+    if block.settings.low_inventory_threshold == 0
+      assign show_inventory = true
+      assign inventory_message = 'products.product.inventory_count' | t: count: variant.inventory_quantity
+    elsif variant.inventory_quantity > 0 and variant.inventory_quantity <= block.settings.low_inventory_threshold
+      assign show_inventory = true
+      assign inventory_message = 'products.product.low_stock_count' | t: count: variant.inventory_quantity
+    endif
+  endif
+-%}
+
+<div 
+  class="product-inventory-status" 
+  id="InventoryStatus-{{ section_id }}"
+  data-inventory-status
+  {{ block.shopify_attributes }}
+  {% unless show_inventory %}hidden{% endunless %}
+>
+  {%- if show_inventory -%}
+    <div class="inventory-status__wrapper">
+      {%- if variant.inventory_quantity > 0 -%}
+        {%- if variant.inventory_quantity <= block.settings.low_inventory_threshold -%}
+          <span class="inventory-status__icon inventory-status__icon--low">
+            {%- render 'icon-alert' -%}
+          </span>
+          <span class="inventory-status__text inventory-status__text--low">
+            {{ inventory_message }}
+          </span>
+        {%- else -%}
+          <span class="inventory-status__icon inventory-status__icon--in-stock">
+            {%- render 'icon-checkmark' -%}
+          </span>
+          <span class="inventory-status__text inventory-status__text--in-stock">
+            {{ 'products.product.in_stock' | t }}
+          </span>
+        {%- endif -%}
+      {%- else -%}
+        <span class="inventory-status__icon inventory-status__icon--out">
+          {%- render 'icon-close' -%}
+        </span>
+        <span class="inventory-status__text inventory-status__text--out">
+          {{ 'products.product.out_of_stock' | t }}
+        </span>
+      {%- endif -%}
+    </div>
+
+    {%- if block.settings.show_incoming_inventory and variant.incoming -%}
+      <div class="inventory-status__incoming">
+        <span class="inventory-status__incoming-icon">
+          {%- render 'icon-truck' -%}
+        </span>
+        <span class="inventory-status__incoming-text">
+          {{ 'products.product.incoming_stock' | t: date: variant.next_incoming_date | date: format: 'month_day_year' }}
+        </span>
+      </div>
+    {%- endif -%}
+  {%- endif -%}
+</div>
+
+<style>
+  .product-inventory-status {
+    margin: 1rem 0;
+  }
+
+  .inventory-status__wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .inventory-status__icon {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+  }
+
+  .inventory-status__icon--in-stock {
+    color: #2ecc71;
+  }
+
+  .inventory-status__icon--low {
+    color: #f39c12;
+  }
+
+  .inventory-status__icon--out {
+    color: #e74c3c;
+  }
+
+  .inventory-status__text--in-stock {
+    color: #27ae60;
+  }
+
+  .inventory-status__text--low {
+    color: #e67e22;
+  }
+
+  .inventory-status__text--out {
+    color: #c0392b;
+  }
+
+  .inventory-status__incoming {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #7f8c8d;
+  }
+
+  .inventory-status__incoming-icon {
+    width: 16px;
+    height: 16px;
+  }
+</style>
+
+<script type="application/json" data-inventory-data="{{ section_id }}">
+  {
+    "inventories": {
+      {%- for variant in product.variants -%}
+        "{{ variant.id }}": {
+          "inventory_management": {{ variant.inventory_management | json }},
+          "inventory_policy": {{ variant.inventory_policy | json }},
+          "inventory_quantity": {{ variant.inventory_quantity | json }},
+          "available": {{ variant.available | json }}
+          {%- if variant.incoming -%}
+          ,"incoming": true,
+          "next_incoming_date": {{ variant.next_incoming_date | date: format: 'month_day_year' | json }}
+          {%- endif -%}
+        }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    },
+    "threshold": {{ block.settings.low_inventory_threshold }},
+    "show_incoming": {{ block.settings.show_incoming_inventory | json }}
+  }
+</script>

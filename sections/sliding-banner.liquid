@@ -1,0 +1,212 @@
+{% schema %}
+{
+  "name": "Sliding Banner",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Add sliding banners"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section Title",
+      "default": "Our Featured Banners"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show navigation arrows",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_slide",
+      "label": "Enable auto-slide",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "banner",
+      "name": "Banner",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "desktop_image",
+          "label": "Desktop Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "mobile_image",
+          "label": "Mobile Image"
+        },
+        {
+          "type": "text",
+          "id": "link_url",
+          "label": "Link URL",
+          "default": "#"
+        },
+        {
+          "type": "text",
+          "id": "alt_text",
+          "label": "Alt Text",
+          "default": "Banner Image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sliding Banner",
+      "category": "Custom Sections"
+    }
+  ]
+}
+{% endschema %}
+
+<div class="sliding-banner-section">
+  <h2 class="section-title">{{ section.settings.section_title }}</h2>
+  <div class="sliding-banner-wrapper">
+    {% if section.settings.show_arrows %}
+      <button class="slider-arrow left-arrow">&lt;</button>
+      <button class="slider-arrow right-arrow">&gt;</button>
+    {% endif %}
+    <div class="sliding-banner-slider">
+      {% for block in section.blocks %}
+        <div class="banner-slide">
+          <a href="{{ block.settings.link_url }}">
+            <picture>
+              <source media="(max-width: 768px)" srcset="{{ block.settings.mobile_image | image_url }}">
+              <img src="{{ block.settings.desktop_image | image_url }}" alt="{{ block.settings.alt_text }}">
+            </picture>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<style>
+  /* General Styles */
+  .sliding-banner-section {
+    text-align: center;
+    padding: 20px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .section-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  /* Slider Wrapper */
+  .sliding-banner-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .sliding-banner-slider {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+    transition: transform 1s ease-in-out;
+  }
+
+  .banner-slide {
+    flex: 0 0 100%;
+    max-width: 100%;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .banner-slide img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Arrow Buttons */
+  .slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .left-arrow {
+    left: 10px;
+  }
+
+  .right-arrow {
+    right: 10px;
+  }
+
+  .slider-arrow:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+</style>
+
+<script>
+ document.addEventListener("DOMContentLoaded", function () {
+  const slider = document.querySelector('.sliding-banner-slider');
+  const slides = document.querySelectorAll('.banner-slide');
+  const leftArrow = document.querySelector('.left-arrow');
+  const rightArrow = document.querySelector('.right-arrow');
+  let currentIndex = 0;
+  const totalSlides = slides.length;
+
+  // Auto-slide setting from the schema
+  const autoSlideEnabled = {{ section.settings.auto_slide | json }};
+  const autoSlideInterval = 5000; // 5 seconds per slide
+
+  // Update slider position
+  function updateSliderPosition() {
+    const offset = -currentIndex * 100; // Each slide takes up 100% of the container width
+    slider.style.transform = `translateX(${offset}%)`;
+  }
+
+  // Go to the next slide
+  function nextSlide() {
+    currentIndex++;
+    if (currentIndex >= totalSlides) {
+      currentIndex = 0; // Loop back to the first slide
+    }
+    updateSliderPosition();
+  }
+
+  // Go to the previous slide
+  function prevSlide() {
+    currentIndex--;
+    if (currentIndex < 0) {
+      currentIndex = totalSlides - 1; // Loop back to the last slide
+    }
+    updateSliderPosition();
+  }
+
+  // Event listeners for arrows (if arrows are enabled)
+  if ({{ section.settings.show_arrows | json }}) {
+    if (rightArrow) rightArrow.addEventListener('click', nextSlide);
+    if (leftArrow) leftArrow.addEventListener('click', prevSlide);
+  }
+
+  // Automatic sliding
+  if (autoSlideEnabled) {
+    setInterval(nextSlide, autoSlideInterval);
+  }
+});
+</script>

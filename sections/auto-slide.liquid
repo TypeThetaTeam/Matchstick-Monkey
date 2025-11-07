@@ -1,0 +1,632 @@
+{% comment %}
+  Quote/Review Slider Section
+  Features: Auto-sliding text, responsive design, full customizer controls
+{% endcomment %}
+
+<style>
+  .quote-review-section-{{ section.id }} {
+    background-color: {{ section.settings.background_color }};
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+  }
+
+  .quote-review-container-{{ section.id }} {
+    max-width: {{ section.settings.container_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .quote-review-wrapper-{{ section.id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: {{ section.settings.column_gap }}px;
+    align-items: center;
+  }
+
+  .quote-review-content-{{ section.id }} {
+    position: relative;
+    overflow: hidden;
+    min-height: 300px;
+  }
+
+  .quote-review-subheading-{{ section.id }} {
+    color: {{ section.settings.subheading_color }};
+    font-size: {{ section.settings.subheading_size }}px;
+    font-weight: {{ section.settings.subheading_weight }};
+    margin-bottom: {{ section.settings.subheading_margin }}px;
+    text-transform: {{ section.settings.subheading_transform }};
+    letter-spacing: {{ section.settings.subheading_spacing }}px;
+  }
+
+  .quote-review-slides-{{ section.id }} {
+    position: relative;
+  }
+
+  .quote-review-slide-{{ section.id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    transition: opacity {{ section.settings.transition_speed }}ms ease-in-out;
+    pointer-events: none;
+  }
+
+  .quote-review-slide-{{ section.id }}.active {
+    opacity: 1;
+    position: relative;
+    pointer-events: auto;
+  }
+
+  .quote-review-heading-{{ section.id }} {
+    color: {{ section.settings.heading_color }};
+    font-size: {{ section.settings.heading_size }}px;
+    font-weight: {{ section.settings.heading_weight }};
+    line-height: {{ section.settings.heading_line_height }};
+    margin: 0;
+  }
+
+  .quote-review-image-wrapper-{{ section.id }} {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: {{ section.settings.image_border_radius }}px;
+  }
+
+  .quote-review-image-wrapper-{{ section.id }} img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+
+  .quote-review-dots-{{ section.id }} {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+  }
+
+  .quote-review-dot-{{ section.id }} {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: {{ section.settings.dot_inactive_color }};
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    padding: 0;
+  }
+
+  .quote-review-dot-{{ section.id }}.active {
+    background-color: {{ section.settings.dot_active_color }};
+    width: 30px;
+    border-radius: 6px;
+  }
+
+  /* Responsive Design */
+  @media screen and (max-width: 989px) {
+    .quote-review-wrapper-{{ section.id }} {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .quote-review-content-{{ section.id }} {
+      order: {{ section.settings.mobile_order_text }};
+    }
+
+    .quote-review-image-wrapper-{{ section.id }} {
+      order: {{ section.settings.mobile_order_image }};
+    }
+
+    .quote-review-heading-{{ section.id }} {
+      font-size: {{ section.settings.heading_size_mobile }}px;
+    }
+
+    .quote-review-subheading-{{ section.id }} {
+      font-size: {{ section.settings.subheading_size_mobile }}px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .quote-review-section-{{ section.id }} {
+      padding: {{ section.settings.padding_top_mobile }}px 0 {{ section.settings.padding_bottom_mobile }}px;
+    }
+  }
+</style>
+
+<div class="quote-review-section-{{ section.id }}">
+  <div class="quote-review-container-{{ section.id }}">
+    <div class="quote-review-wrapper-{{ section.id }}">
+      
+      <!-- Left Side: Text Content -->
+      <div class="quote-review-content-{{ section.id }}">
+        {% if section.settings.subheading != blank %}
+          <p class="quote-review-subheading-{{ section.id }}">{{ section.settings.subheading }}</p>
+        {% endif %}
+
+        <div class="quote-review-slides-{{ section.id }}">
+          {% for block in section.blocks %}
+            <div class="quote-review-slide-{{ section.id }} {% if forloop.first %}active{% endif %}" 
+                 data-slide-index="{{ forloop.index0 }}">
+              <h2 class="quote-review-heading-{{ section.id }}">{{ block.settings.heading }}</h2>
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- Navigation Dots -->
+        {% if section.settings.show_dots %}
+          <div class="quote-review-dots-{{ section.id }}">
+            {% for block in section.blocks %}
+              <button class="quote-review-dot-{{ section.id }} {% if forloop.first %}active{% endif %}"
+                      data-dot-index="{{ forloop.index0 }}"
+                      aria-label="Go to slide {{ forloop.index }}">
+              </button>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Right Side: Image -->
+      <div class="quote-review-image-wrapper-{{ section.id }}">
+        {% if section.settings.image != blank %}
+          <img 
+            src="{{ section.settings.image | image_url: width: 1200 }}"
+            srcset="{{ section.settings.image | image_url: width: 400 }} 400w,
+                    {{ section.settings.image | image_url: width: 600 }} 600w,
+                    {{ section.settings.image | image_url: width: 800 }} 800w,
+                    {{ section.settings.image | image_url: width: 1200 }} 1200w"
+            sizes="(max-width: 749px) 100vw, (max-width: 989px) 100vw, 50vw"
+            alt="{{ section.settings.image.alt | escape }}"
+            loading="lazy"
+            width="{{ section.settings.image.width }}"
+            height="{{ section.settings.image.height }}">
+        {% else %}
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const sectionId = '{{ section.id }}';
+    const autoplay = {{ section.settings.autoplay }};
+    const autoplaySpeed = {{ section.settings.autoplay_speed }};
+    const pauseOnHover = {{ section.settings.pause_on_hover }};
+    
+    const slides = document.querySelectorAll(`.quote-review-slide-${sectionId}`);
+    const dots = document.querySelectorAll(`.quote-review-dot-${sectionId}`);
+    const container = document.querySelector(`.quote-review-content-${sectionId}`);
+    
+    let currentSlide = 0;
+    let autoplayInterval;
+    let isPaused = false;
+
+    function showSlide(index) {
+      // Remove active class from all slides and dots
+      slides.forEach(slide => slide.classList.remove('active'));
+      dots.forEach(dot => dot.classList.remove('active'));
+      
+      // Add active class to current slide and dot
+      if (slides[index]) {
+        slides[index].classList.add('active');
+      }
+      if (dots[index]) {
+        dots[index].classList.add('active');
+      }
+      
+      currentSlide = index;
+    }
+
+    function nextSlide() {
+      if (isPaused) return;
+      const next = (currentSlide + 1) % slides.length;
+      showSlide(next);
+    }
+
+    function startAutoplay() {
+      if (autoplay && slides.length > 1) {
+        autoplayInterval = setInterval(nextSlide, autoplaySpeed);
+      }
+    }
+
+    function stopAutoplay() {
+      clearInterval(autoplayInterval);
+    }
+
+    // Dot click handlers
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        showSlide(index);
+        stopAutoplay();
+        startAutoplay();
+      });
+    });
+
+    // Pause on hover
+    if (pauseOnHover && container) {
+      container.addEventListener('mouseenter', () => {
+        isPaused = true;
+      });
+      
+      container.addEventListener('mouseleave', () => {
+        isPaused = false;
+      });
+    }
+
+    // Initialize
+    if (slides.length > 0) {
+      showSlide(0);
+      startAutoplay();
+    }
+
+    // Cleanup on theme editor reload
+    document.addEventListener('shopify:section:unload', () => {
+      stopAutoplay();
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Quote/Review Slider",
+  "tag": "section",
+  "class": "section-quote-review-slider",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout Settings"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "min": 1000,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "label": "Container width",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Gap between columns",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#F5F1E8"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "dot_active_color",
+      "label": "Active dot color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "dot_inactive_color",
+      "label": "Inactive dot color",
+      "default": "#CCCCCC"
+    },
+    {
+      "type": "header",
+      "content": "Subheading"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading text",
+      "default": "'QUOTE/REVIEW'"
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "min": 12,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "Subheading size (desktop)",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_mobile",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Subheading size (mobile)",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "subheading_weight",
+      "label": "Subheading weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "select",
+      "id": "subheading_transform",
+      "label": "Subheading text transform",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "uppercase", "label": "Uppercase" },
+        { "value": "lowercase", "label": "Lowercase" },
+        { "value": "capitalize", "label": "Capitalize" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "subheading_spacing",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "unit": "px",
+      "label": "Letter spacing",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "subheading_margin",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Margin bottom",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 24,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size (desktop)",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size (mobile)",
+      "default": 32
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Heading weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "range",
+      "id": "heading_line_height",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "label": "Line height",
+      "default": 1.2
+    },
+    {
+      "type": "header",
+      "content": "Image Settings"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Image border radius",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Slider Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Enable autoplay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "min": 2000,
+      "max": 9500,
+      "step": 500,
+      "unit": "ms",
+      "label": "Autoplay speed",
+      "default": 4000
+    },
+    {
+      "type": "range",
+      "id": "transition_speed",
+      "min": 200,
+      "max": 1500,
+      "step": 100,
+      "unit": "ms",
+      "label": "Transition speed",
+      "default": 600
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pause on hover",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dots",
+      "label": "Show navigation dots",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding top (desktop)",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding bottom (desktop)",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding top (mobile)",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding bottom (mobile)",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Mobile Layout"
+    },
+    {
+      "type": "select",
+      "id": "mobile_order_text",
+      "label": "Text position on mobile",
+      "options": [
+        { "value": "1", "label": "First" },
+        { "value": "2", "label": "Second" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "mobile_order_image",
+      "label": "Image position on mobile",
+      "options": [
+        { "value": "1", "label": "First" },
+        { "value": "2", "label": "Second" }
+      ],
+      "default": "1"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Quote/Review Slide",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "heading",
+          "label": "Heading text",
+          "default": "Your quote or review text goes here"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Auto Slide",
+      "blocks": [
+        {
+          "type": "slide",
+          "settings": {
+            "heading": "The best investment we've made in our business this year"
+          }
+        },
+        {
+          "type": "slide",
+          "settings": {
+            "heading": "Exceptional quality and outstanding customer service"
+          }
+        },
+        {
+          "type": "slide",
+          "settings": {
+            "heading": "Transformed the way our team works together"
+          }
+        },
+        {
+          "type": "slide",
+          "settings": {
+            "heading": "Highly recommend to anyone looking for reliability"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

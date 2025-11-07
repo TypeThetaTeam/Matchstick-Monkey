@@ -1,0 +1,443 @@
+{% comment %}
+  Additional Features Section with Mobile Swiper
+  Add this file to your theme's sections folder
+{% endcomment %}
+
+<div class="additional-features-section">
+  <div class="page-width">
+    {% if section.settings.heading != blank %}
+      <h2 class="section-heading">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    <div class="features-container" data-features-slider>
+      <div class="features-wrapper">
+        {% for block in section.blocks %}
+          <div class="feature-card" {{ block.shopify_attributes }}>
+            {% if block.settings.image != blank %}
+              <div class="feature-image">
+                {{ block.settings.image | image_url: width: 400 | image_tag: 
+                   loading: 'lazy',
+                   alt: block.settings.image.alt | default: block.settings.heading
+                }}
+              </div>
+            {% else %}
+              <div class="feature-image feature-placeholder">
+                {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+              </div>
+            {% endif %}
+
+            {% if block.settings.heading != blank %}
+              <h3 class="feature-heading">{{ block.settings.heading }}</h3>
+            {% endif %}
+
+            {% if block.settings.subtext != blank %}
+              <p class="feature-subtext">{{ block.settings.subtext }}</p>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Navigation Dots for Mobile -->
+      <div class="slider-dots"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .additional-features-section {
+    padding: 60px 0;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .section-heading {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 40px;
+    color: {{ section.settings.heading_color }};
+  }
+
+  .features-container {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .features-wrapper {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 24px;
+    transition: transform 0.3s ease;
+  }
+
+  .feature-card {
+    text-align: center;
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .feature-image {
+    width: 100%;
+    height: 200px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .feature-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .feature-placeholder {
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .feature-heading {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #000;
+  }
+
+  .feature-subtext {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+  }
+
+  .slider-dots {
+    display: none;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+  }
+
+  .slider-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ddd;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+  }
+
+  .slider-dot.active {
+    background: #000;
+    transform: scale(1.2);
+  }
+
+  /* Tablet View */
+  @media screen and (max-width: 1024px) {
+    .features-wrapper {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .section-heading {
+      font-size: 28px;
+    }
+  }
+
+  /* Mobile View - Slider */
+  @media screen and (max-width: 768px) {
+    .additional-features-section {
+      padding: 40px 0;
+    }
+
+    .section-heading {
+      font-size: 24px;
+      margin-bottom: 30px;
+    }
+
+    .features-container {
+      overflow: visible;
+    }
+
+    .features-wrapper {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      gap: 16px;
+      padding: 0 20px;
+    }
+
+    .features-wrapper::-webkit-scrollbar {
+      display: none;
+    }
+
+    .feature-card {
+      flex: 0 0 calc(100% - 40px);
+      scroll-snap-align: center;
+      max-width: 350px;
+    }
+
+    .feature-image {
+      height: 180px;
+    }
+
+    .slider-dots {
+      display: flex;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .feature-card {
+      flex: 0 0 calc(100% - 20px);
+    }
+
+    .feature-heading {
+      font-size: 18px;
+    }
+  }
+</style>
+
+<script>
+  class FeaturesSlider {
+    constructor(container) {
+      this.container = container;
+      this.wrapper = container.querySelector('.features-wrapper');
+      this.cards = container.querySelectorAll('.feature-card');
+      this.dotsContainer = container.querySelector('.slider-dots');
+      this.currentIndex = 0;
+      this.isMobile = window.innerWidth <= 768;
+
+      this.init();
+    }
+
+    init() {
+      if (!this.isMobile) return;
+
+      this.createDots();
+      this.setupScrollListener();
+      this.updateActiveDot();
+
+      // Handle window resize
+      window.addEventListener('resize', () => {
+        const wasMobile = this.isMobile;
+        this.isMobile = window.innerWidth <= 768;
+        
+        if (wasMobile !== this.isMobile) {
+          if (this.isMobile) {
+            this.createDots();
+            this.setupScrollListener();
+          } else {
+            this.dotsContainer.innerHTML = '';
+          }
+        }
+      });
+    }
+
+    createDots() {
+      this.dotsContainer.innerHTML = '';
+      
+      this.cards.forEach((_, index) => {
+        const dot = document.createElement('div');
+        dot.classList.add('slider-dot');
+        if (index === 0) dot.classList.add('active');
+        
+        dot.addEventListener('click', () => {
+          this.scrollToSlide(index);
+        });
+        
+        this.dotsContainer.appendChild(dot);
+      });
+    }
+
+    setupScrollListener() {
+      let scrollTimeout;
+      
+      this.wrapper.addEventListener('scroll', () => {
+        clearTimeout(scrollTimeout);
+        
+        scrollTimeout = setTimeout(() => {
+          this.updateCurrentIndex();
+          this.updateActiveDot();
+        }, 100);
+      });
+
+      // Touch swipe support
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      this.wrapper.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+      }, { passive: true });
+
+      this.wrapper.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].clientX;
+        this.handleSwipe();
+      }, { passive: true });
+    }
+
+    handleSwipe() {
+      const swipeThreshold = 50;
+      const diff = touchStartX - touchEndX;
+
+      if (Math.abs(diff) > swipeThreshold) {
+        if (diff > 0 && this.currentIndex < this.cards.length - 1) {
+          // Swipe left - next
+          this.scrollToSlide(this.currentIndex + 1);
+        } else if (diff < 0 && this.currentIndex > 0) {
+          // Swipe right - previous
+          this.scrollToSlide(this.currentIndex - 1);
+        }
+      }
+    }
+
+    updateCurrentIndex() {
+      const scrollLeft = this.wrapper.scrollLeft;
+      const cardWidth = this.cards[0].offsetWidth;
+      const gap = 16;
+      
+      this.currentIndex = Math.round(scrollLeft / (cardWidth + gap));
+    }
+
+    updateActiveDot() {
+      const dots = this.dotsContainer.querySelectorAll('.slider-dot');
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === this.currentIndex);
+      });
+    }
+
+    scrollToSlide(index) {
+      const cardWidth = this.cards[0].offsetWidth;
+      const gap = 16;
+      const scrollPosition = index * (cardWidth + gap);
+      
+      this.wrapper.scrollTo({
+        left: scrollPosition,
+        behavior: 'smooth'
+      });
+      
+      this.currentIndex = index;
+      this.updateActiveDot();
+    }
+  }
+
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    const sliderContainers = document.querySelectorAll('[data-features-slider]');
+    sliderContainers.forEach(container => {
+      new FeaturesSlider(container);
+    });
+  });
+
+  // Reinitialize on Shopify section events
+  if (Shopify && Shopify.designMode) {
+    document.addEventListener('shopify:section:load', () => {
+      const sliderContainers = document.querySelectorAll('[data-features-slider]');
+      sliderContainers.forEach(container => {
+        new FeaturesSlider(container);
+      });
+    });
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Additional Features",
+  "tag": "section",
+  "class": "section-additional-features",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "Additional Features"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#EDE4DA"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature Card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Header Text"
+        },
+        {
+          "type": "textarea",
+          "id": "subtext",
+          "label": "Sub Text",
+          "default": "Sub text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Additional Features",
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "heading": "Header Text",
+            "subtext": "Sub text"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "heading": "Header Text",
+            "subtext": "Sub text"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "heading": "Header Text",
+            "subtext": "Sub text"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "heading": "Header Text",
+            "subtext": "Sub text"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "heading": "Header Text",
+            "subtext": "Sub text"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

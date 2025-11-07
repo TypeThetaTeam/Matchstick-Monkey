@@ -1,0 +1,209 @@
+{% stylesheet %}
+    /* Initial state for scroll-in */
+    .value-block {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 1.2s ease-out; /* 👈 Slower animation duration */
+  }
+
+    /* Visible state (on scroll) */
+    .our-values-section--visible .value-block {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Staggered animation delay */
+    .our-values-grid .value-block:nth-child(1) { transition-delay: 0.1s; }
+    .our-values-grid .value-block:nth-child(2) { transition-delay: 0.2s; }
+    .our-values-grid .value-block:nth-child(3) { transition-delay: 0.3s; }
+    .our-values-grid .value-block:nth-child(4) { transition-delay: 0.4s; }
+    .our-values-grid .value-block:nth-child(5) { transition-delay: 0.5s; }
+    .our-values-grid .value-block:nth-child(6) { transition-delay: 0.6s; }
+    .our-values-grid .value-block:nth-child(7) { transition-delay: 0.7s; }
+    .our-values-grid .value-block:nth-child(8) { transition-delay: 0.8s; }
+
+    /* Hover effect (only on desktop) */
+    @media (min-width: 768px) {
+      .value-block {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+
+    }
+
+
+
+          .content-div {
+            background: #f5f1ec;
+            padding: 0px;
+        }
+            .our-values-grid {
+              max-width: 90%;
+              margin: 0 auto;
+              background: #f5f2ed;
+          }
+              .our-values-section {
+                    text-align: center;
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px 15px;
+    background: #f5f2ed;
+              }
+
+              .our-values-title {
+                font-size: 40px;
+    font-weight: 700;
+    margin: 0px;
+    padding-top: 0px;
+                background: #f5f1ec;
+
+              }
+
+              .our-values-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+              }
+
+              /* .value-block img {
+                width: 5rem;
+            } */
+
+              @media(min-width: 768px) {
+                .our-values-grid {
+                  grid-template-columns: repeat(4, 1fr);
+                }
+
+
+              }
+
+        @media only screen and (max-width: 600px) {
+        .our-values-grid{
+                  max-width: 100% !important;
+          padding-bottom: 10px;
+                }
+                .value-block{
+                  padding:0px !important;
+                }
+      }
+
+              .value-block {
+                background: #f5f2ed;
+                padding: 20px;
+                border-radius: 10px;
+              }
+
+              .value-block img {
+                max-width: 100%;
+                height: auto;
+                margin-bottom: 10px;
+              }
+
+              .value-header {
+                font-weight: bold;
+
+              }
+
+              .value-description {
+                font-size: 14px;
+                color: #666;
+              }
+{% endstylesheet %}
+
+<section class="our-values-section">
+  <h2 class="our-values-title">{{ section.settings.title }}</h2>
+  <div class="content-div">
+    <div class="our-values-grid">
+      {% for block in section.blocks %}
+        <div class="value-block">
+          {% if block.settings.image != blank %}
+            <img src="{{ block.settings.image | image_url: width: 200 }}" alt="{{ block.settings.heading }}">
+          {% endif %}
+          <div class="value-header subheading">{{ block.settings.heading }}</div>
+          <div class="value-description">{{ block.settings.description }}</div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Our Values",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Our Values"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "value",
+      "name": "Value Block",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Header"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "Description",
+          "default": "content"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Our Values",
+      "category": "Custom",
+      "blocks": [
+        {
+          "type": "value"
+        },
+        {
+          "type": "value"
+        },
+        {
+          "type": "value"
+        },
+        {
+          "type": "value"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const section = document.querySelector('.our-values-section');
+
+    if (section) {
+      const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            section.classList.add('our-values-section--visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.3
+      });
+
+      observer.observe(section);
+    }
+  });
+</script>

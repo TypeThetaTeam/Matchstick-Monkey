@@ -1,0 +1,415 @@
+{% comment %}
+  Featured Collection Section with Image Blocks
+{% endcomment %}
+
+<div class="featured-collection-section">
+  <div class="container">
+    {% if section.settings.header_text != blank %}
+      <h2 class="section-header">{{ section.settings.header_text }}</h2>
+    {% endif %}
+    
+    <!-- Desktop Grid -->
+    <div class="desktop-grid">
+      {% for block in section.blocks %}
+        <div class="image-card {% if forloop.index == 2 %}center-card{% endif %}" {{ block.shopify_attributes }}>
+          {% if block.settings.image != blank %}
+            <div class="image-wrapper">
+              <img 
+                src="{{ block.settings.image | img_url: '800x' }}"
+                alt="{{ block.settings.image.alt | escape }}"
+                loading="lazy"
+              >
+            </div>
+          {% else %}
+            <div class="image-wrapper placeholder">
+              {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+          {% endif %}
+          
+          <div class="card-content">
+            {% if block.settings.heading != blank %}
+              <h3 class="card-heading">{{ block.settings.heading }}</h3>
+            {% endif %}
+            
+            {% if block.settings.subtext != blank %}
+              <p class="card-subtext">{{ block.settings.subtext }}</p>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Mobile Slider -->
+    <div class="mobile-slider">
+      <div class="slider-container">
+        {% for block in section.blocks %}
+          <div class="slider-card" {{ block.shopify_attributes }}>
+            {% if block.settings.image != blank %}
+              <div class="image-wrapper">
+                <img 
+                  src="{{ block.settings.image | img_url: '800x' }}"
+                  alt="{{ block.settings.image.alt | escape }}"
+                  loading="lazy"
+                >
+              </div>
+            {% else %}
+              <div class="image-wrapper placeholder">
+                {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+              </div>
+            {% endif %}
+            
+            <div class="card-content">
+              {% if block.settings.heading != blank %}
+                <h3 class="card-heading">{{ block.settings.heading }}</h3>
+              {% endif %}
+              
+              {% if block.settings.subtext != blank %}
+                <p class="card-subtext">{{ block.settings.subtext }}</p>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="slider-dots"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .featured-collection-section {
+    padding: 60px 20px;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .featured-collection-section .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-header {
+    text-align: center;
+    font-size: 26px;
+    font-weight: 400;
+    margin-bottom: 45px;
+    color: {{ section.settings.text_color }};
+    letter-spacing: 0.3px;
+  }
+
+  /* Desktop Grid */
+  .desktop-grid {
+    display: grid;
+    grid-template-columns: 280px 380px 280px;
+    justify-content: center;
+    gap: 25px;
+    align-items: flex-start;
+  }
+
+  .mobile-slider {
+    display: none;
+  }
+
+  .image-card {
+    text-align: center;
+  }
+
+  /* Side cards styling */
+  .image-card:not(.center-card) .image-wrapper {
+    padding-bottom: 140%;
+  }
+
+  .image-card:not(.center-card) {
+    padding-top: 40px;
+  }
+
+  /* Center card styling - bigger */
+  .center-card .image-wrapper {
+    padding-bottom: 145%;
+  }
+
+  .image-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    background-color: #f8f5f1;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  }
+
+  .image-wrapper img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .image-card:hover .image-wrapper img {
+    transform: scale(1.04);
+  }
+
+  .image-wrapper.placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .placeholder-svg {
+    width: 50%;
+    height: 50%;
+    opacity: 0.2;
+  }
+
+  .card-content {
+    padding: 0 5px;
+  }
+
+  .card-heading {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: {{ section.settings.text_color }};
+    letter-spacing: 0.2px;
+  }
+
+  .card-subtext {
+    font-size: 12px;
+    color: {{ section.settings.text_color }};
+    opacity: 0.65;
+    font-weight: 400;
+  }
+
+  /* Tablet responsive */
+  @media (max-width: 1024px) {
+    .desktop-grid {
+      grid-template-columns: 240px 340px 240px;
+      gap: 20px;
+    }
+
+    .section-header {
+      font-size: 24px;
+    }
+  }
+
+  /* Mobile Slider */
+  @media (max-width: 768px) {
+    .desktop-grid {
+      display: none;
+    }
+
+    .mobile-slider {
+      display: block;
+      position: relative;
+    }
+
+    .slider-container {
+      display: flex;
+      overflow-x: scroll;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      gap: 15px;
+      padding: 0 calc((100vw - 300px) / 2);
+      margin: 0 -20px;
+      scrollbar-width: none;
+    }
+
+    .slider-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .slider-card {
+      flex: 0 0 300px;
+      scroll-snap-align: center;
+      text-align: center;
+    }
+
+    .slider-card .image-wrapper {
+      padding-bottom: 140%;
+      border-radius: 10px;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .slider-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 20px;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .dot.active {
+      background-color: {{ section.settings.text_color }};
+      width: 20px;
+      border-radius: 4px;
+    }
+
+    .featured-collection-section {
+      padding: 50px 20px;
+    }
+
+    .section-header {
+      font-size: 22px;
+      margin-bottom: 35px;
+    }
+
+    .card-heading {
+      font-size: 14px;
+    }
+
+    .card-subtext {
+      font-size: 12px;
+    }
+  }
+</style>
+
+<script>
+(function() {
+  if (window.innerWidth > 768) return;
+
+  const slider = document.querySelector('.slider-container');
+  const dots = document.querySelector('.slider-dots');
+  const cards = document.querySelectorAll('.slider-card');
+
+  if (!slider || !dots || !cards.length) return;
+
+  // Create dots
+  cards.forEach((_, index) => {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (index === 0 ? ' active' : '');
+    dot.addEventListener('click', () => {
+      const card = cards[index];
+      const scrollLeft = card.offsetLeft - (slider.offsetWidth - card.offsetWidth) / 2;
+      slider.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+    });
+    dots.appendChild(dot);
+  });
+
+  // Update dots on scroll
+  let scrollTimer;
+  slider.addEventListener('scroll', () => {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => {
+      const scrollLeft = slider.scrollLeft;
+      const containerWidth = slider.offsetWidth;
+      let activeIndex = 0;
+      let minDistance = Infinity;
+
+      cards.forEach((card, index) => {
+        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+        const containerCenter = scrollLeft + containerWidth / 2;
+        const distance = Math.abs(cardCenter - containerCenter);
+        
+        if (distance < minDistance) {
+          minDistance = distance;
+          activeIndex = index;
+        }
+      });
+
+      document.querySelectorAll('.dot').forEach((dot, index) => {
+        dot.classList.toggle('active', index === activeIndex);
+      });
+    }, 50);
+  });
+
+  // Touch swipe support
+  let startX = 0;
+  let scrollLeft = 0;
+  let isDown = false;
+
+  slider.addEventListener('touchstart', (e) => {
+    isDown = true;
+    startX = e.touches[0].pageX - slider.offsetLeft;
+    scrollLeft = slider.scrollLeft;
+  }, { passive: true });
+
+  slider.addEventListener('touchend', () => {
+    isDown = false;
+  }, { passive: true });
+
+  slider.addEventListener('touchmove', (e) => {
+    if (!isDown) return;
+    const x = e.touches[0].pageX - slider.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    slider.scrollLeft = scrollLeft - walk;
+  }, { passive: true });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Featured Collection",
+  "settings": [
+    {
+      "type": "text",
+      "id": "header_text",
+      "label": "Header Text",
+      "default": "Header text"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#faf9f7"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#2c2c2c"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image_block",
+      "name": "Image Block",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Header Text"
+        },
+        {
+          "type": "text",
+          "id": "subtext",
+          "label": "Sub Text",
+          "default": "Sub text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Collection",
+      "blocks": [
+        {
+          "type": "image_block"
+        },
+        {
+          "type": "image_block"
+        },
+        {
+          "type": "image_block"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

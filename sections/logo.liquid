@@ -1,0 +1,276 @@
+{% schema %}
+{
+  "name": "Logo Scroll",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Our Partners"
+    },
+    {
+      "type": "range",
+      "id": "heading_text_size",
+      "label": "Heading Text Size (px)",
+      "min": 14,
+      "max": 48,
+      "step": 1,
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Section Padding Top (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Section Padding Bottom (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "section_padding_left",
+      "label": "Section Padding Left (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "section_padding_right",
+      "label": "Section Padding Right (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "logo_height",
+      "label": "Logo Max Height (px)",
+      "min": 30,
+      "max": 150,
+      "step": 5,
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "logo_spacing",
+      "label": "Space Between Logos (px)",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "animation_speed",
+      "label": "Animation Speed (seconds)",
+      "min": 20,
+      "max": 120,
+      "step": 5,
+      "default": 60,
+      "info": "Lower = faster scroll"
+    },
+    {
+      "type": "range",
+      "id": "heading_margin_bottom",
+      "label": "Heading Bottom Margin (px)",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "default": 40
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pause Animation on Hover",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Logo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo_image",
+          "label": "Logo Image"
+        },
+        {
+          "type": "url",
+          "id": "logo_link",
+          "label": "Logo Link (Optional)"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 20,
+  "presets": [
+    {
+      "name": "Logo Scroll"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+  .logo-scroll-section {
+    overflow: hidden;
+  }
+
+  .logo-scroll-section__heading {
+    text-align: center;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .logo-scroll-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .logo-scroll-track {
+    display: flex;
+    align-items: center;
+    will-change: transform;
+  }
+
+  .logo-scroll-item {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+  }
+
+  .logo-scroll-item img {
+    width: auto;
+    object-fit: contain;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .logo-scroll-item a {
+    display: block;
+    line-height: 0;
+  }
+{% endstylesheet %}
+
+<section 
+  class="logo-scroll-section" 
+  style="background-color: {{ section.settings.background_color }}; padding: {{ section.settings.section_padding_top }}px {{ section.settings.section_padding_right }}px {{ section.settings.section_padding_bottom }}px {{ section.settings.section_padding_left }}px;">
+  
+  {% if section.settings.heading != blank %}
+    <h2 
+      class="logo-scroll-section__heading" 
+      style="font-size: {{ section.settings.heading_text_size }}px; color: {{ section.settings.heading_color }}; margin-bottom: {{ section.settings.heading_margin_bottom }}px;">
+      {{ section.settings.heading }}
+    </h2>
+  {% endif %}
+
+  <div class="logo-scroll-wrapper" id="logo-scroll-wrapper-{{ section.id }}">
+    <div class="logo-scroll-track" id="logo-scroll-track-{{ section.id }}">
+      {% assign logos = section.blocks %}
+      {% comment %} Duplicate logos twice for seamless infinite scroll {% endcomment %}
+      {% for i in (1..2) %}
+        {% for block in logos %}
+          {% assign logo_image = block.settings.logo_image %}
+          {% assign logo_link = block.settings.logo_link %}
+          {% if logo_image %}
+            <div class="logo-scroll-item" style="margin-right: {{ section.settings.logo_spacing }}px;">
+              {% if logo_link != blank %}
+                <a href="{{ logo_link }}" target="_blank" rel="noopener">
+                  <img 
+                    src="{{ logo_image | img_url: '400x' }}" 
+                    alt="Partner Logo" 
+                    loading="lazy"
+                    style="max-height: {{ section.settings.logo_height }}px;">
+                </a>
+              {% else %}
+                <img 
+                  src="{{ logo_image | img_url: '400x' }}" 
+                  alt="Partner Logo" 
+                  loading="lazy"
+                  style="max-height: {{ section.settings.logo_height }}px;">
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<script>
+  (function() {
+    const sectionId = '{{ section.id }}';
+    const track = document.getElementById('logo-scroll-track-' + sectionId);
+    const wrapper = document.getElementById('logo-scroll-wrapper-' + sectionId);
+    const pauseOnHover = {{ section.settings.pause_on_hover }};
+
+    if (!track || !wrapper) return;
+
+    const logoItems = track.querySelectorAll('.logo-scroll-item');
+    const halfCount = logoItems.length / 2;
+
+    if (halfCount === 0) return;
+
+    let singleSetWidth = 0;
+    for (let i = 0; i < halfCount; i++) {
+      const style = window.getComputedStyle(logoItems[i]);
+      const marginRight = parseFloat(style.marginRight) || 0;
+      singleSetWidth += logoItems[i].offsetWidth + marginRight;
+    }
+
+    // Create dynamic keyframes
+    const styleEl = document.createElement('style');
+    styleEl.type = 'text/css';
+
+    const animationDuration = {{ section.settings.animation_speed }};
+
+    const keyframes = `
+      @keyframes scroll-logos-${sectionId} {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-${singleSetWidth}px); }
+      }
+    `;
+
+    styleEl.innerHTML = keyframes;
+    document.head.appendChild(styleEl);
+
+    track.style.animation = `scroll-logos-${sectionId} ${animationDuration}s linear infinite`;
+
+    if (pauseOnHover) {
+      wrapper.addEventListener('mouseenter', function() {
+        track.style.animationPlayState = 'paused';
+      });
+
+      wrapper.addEventListener('mouseleave', function() {
+        track.style.animationPlayState = 'running';
+      });
+    }
+  })();
+</script>

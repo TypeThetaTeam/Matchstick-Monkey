@@ -1,0 +1,397 @@
+{% comment %} In your header.liquid file {% endcomment %}
+{%- assign mega_menu = section.settings.menu -%}
+{%- assign image_blocks = section.blocks | where: 'type', 'menu_images' -%}
+
+<nav class="mega-menu header__inline-menu">
+  <ul class="mega-menu__list">
+    {% for link in linklists[mega_menu].links %}
+      {%- assign has_children = false -%}
+      {%- if link.links != blank -%}
+        {%- assign has_children = true -%}
+      {%- endif -%}
+
+      <li
+        class="mega-menu__item{% if has_children %} has-dropdown{% endif %}"
+        data-menu-title="{{ link.title | handleize }}"
+      >
+        <a href="{{ link.url }}" class="mega-menu__parent-link">
+          {{- link.title -}}
+          {%- if has_children -%}
+            <span class="dropdown-indicator">▾</span>
+          {%- endif -%}
+        </a>
+
+        {% if has_children %}
+          <div class="mega-menu__dropdown">
+            <div class="mega-menu__container page-width">
+              <div class="mega-menu__columns">
+                {% for child_link in link.links %}
+                  <div class="mega-menu__column">
+                    <a href="{{ child_link.url }}" class="mega-menu__subtitle">{{ child_link.title }}</a>
+
+                    {% if child_link.links != blank %}
+                      <ul class="mega-menu__child-list">
+                        {% for grandchild_link in child_link.links %}
+                          <li class="mega-menu__grandchild">
+                            <a href="{{ grandchild_link.url }}">{{ grandchild_link.title }}</a>
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+
+              {% comment %} Image block rendering {% endcomment %}
+              {%- assign menu_handle = link.title | handleize -%}
+              {% for block in image_blocks %}
+                {%- assign target_menu = block.settings.menu_item | handleize -%}
+                {%- if target_menu == menu_handle -%}
+                  <div class="mega-menu__image-block">
+                    <!-- <h4 class="image-block-title">{{ block.settings.title | default: 'Featured' }}</h4> -->
+                    <div class="image-block-grid">
+                      {% for i in (1..3) %}
+                        {%- liquid
+                          assign image_key = 'image_' | append: i
+                          assign image = block.settings[image_key]
+                          assign link_key = 'link_' | append: i
+                          assign image_link = block.settings[link_key]
+                          assign text_key = 'text_' | append: i
+                          assign image_text = block.settings[text_key]
+                        -%}
+                        {% if image != blank %}
+                          <div class="mega-menu__image">
+                            {% if image_link != blank %}<a href="{{ image_link }}" class="image-link">{% endif %}
+                            <div class="image-wrapper">
+                              <img
+                                src="{{ image | img_url: '400x' }}"
+                                alt="{{ image.alt | escape }}"
+                                loading="lazy"
+                                width="400"
+                                height="{{ 400 | divided_by: image.aspect_ratio | round }}"
+                              >
+                            </div>
+                            {% if image_text != blank %}
+                              <div class="image-caption">{{ image_text }}</div>
+                            {% endif %}
+                            {% if image_link != blank %}</a>{% endif %}
+                          </div>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                {%- endif -%}
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+</nav>
+
+<style>
+  /* Mega Menu Base Styles */
+  .mega-menu {
+    position: relative;
+    z-index: 1000;
+  }
+
+  .mega-menu__list {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .mega-menu__item {
+    position: relative;
+    padding: 0 15px;
+  }
+
+  .mega-menu__parent-link {
+    display: flex;
+    align-items: center;
+    padding: 20px 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+    color: #333;
+    position: relative;
+    transition: color 0.2s;
+  }
+
+  .mega-menu__parent-link:hover {
+    color: #d32f2f;
+  }
+
+  .dropdown-indicator {
+    margin-left: 5px;
+    font-size: 12px;
+  }
+
+  /* Dropdown Container */
+  .mega-menu__dropdown {
+    position: fixed;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(15px);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    z-index: 999;
+    max-height: 0;
+    overflow: hidden;
+  }
+
+  .mega-menu__item:hover .mega-menu__dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    max-height: 1000px;
+    overflow: visible;
+  }
+
+  .mega-menu__container {
+    display: flex;
+    padding: 30px 0;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* Menu Columns */
+  .mega-menu__columns {
+    display: flex;
+    flex-wrap: wrap;
+    flex: 2;
+    padding-right: 40px;
+    border-right: 1px solid #f0f0f0;
+  }
+
+  .mega-menu__column {
+    flex: 1 0 25%;
+    min-width: 200px;
+    padding: 0 15px;
+    margin-bottom: 20px;
+  }
+
+  .mega-menu__subtitle {
+    display: block;
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 15px;
+    text-decoration: none;
+    color: #222;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #eee;
+  }
+
+  .mega-menu__child-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .mega-menu__grandchild {
+    margin-bottom: 12px;
+  }
+
+  .mega-menu__grandchild a {
+    text-decoration: none;
+    color: #555;
+    font-size: 14px;
+    transition: all 0.2s;
+    display: block;
+    padding: 3px 0;
+  }
+
+  .mega-menu__grandchild a:hover {
+    color: #d32f2f;
+    padding-left: 5px;
+  }
+
+  /* Image Block Styles */
+  .mega-menu__image-block {
+    flex: 2;
+    padding-left: 40px;
+  }
+
+  .image-block-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+    color: #222;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f0f0;
+  }
+
+  .image-block-grid {
+    display: flex;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .mega-menu__image {
+    position: relative;
+    overflow: hidden;
+    border-radius: 6px;
+    transition: transform 0.3s ease;
+        width: 250px;
+  }
+
+  .mega-menu__image:hover {
+    transform: translateY(-5px);
+  }
+
+  .image-wrapper {
+    overflow: hidden;
+    border-radius: 6px;
+  }
+
+  .mega-menu__image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.5s ease;
+  }
+
+  .mega-menu__image:hover img {
+    transform: scale(1.05);
+  }
+
+  .image-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 10px 15px;
+    font-size: 13px;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .mega-menu__image:hover .image-caption {
+    transform: translateY(0);
+  }
+
+  /* Mobile Styles */
+  @media (max-width: 989px) {
+    .mega-menu__dropdown {
+      position: static;
+      width: 100%;
+      max-height: 0;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .mega-menu__item:hover .mega-menu__dropdown {
+      transform: none;
+    }
+
+    .mega-menu__container {
+      flex-direction: column;
+      padding: 15px 0;
+    }
+
+    .mega-menu__columns {
+      padding-right: 0;
+      border-right: none;
+      border-bottom: 1px solid #f0f0f0;
+      padding-bottom: 20px;
+      margin-bottom: 20px;
+    }
+
+    .mega-menu__image-block {
+      padding-left: 0;
+    }
+
+    .image-block-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const menuItems = document.querySelectorAll('.mega-menu__item.has-dropdown');
+
+    // Desktop hover functionality
+    menuItems.forEach(item => {
+      item.addEventListener('mouseenter', () => {
+        if (window.innerWidth > 989) {
+          // Close other menus
+          menuItems.forEach(otherItem => {
+            if (otherItem !== item) {
+              otherItem.classList.remove('dropdown-active');
+            }
+          });
+
+          // Open current menu
+          item.classList.add('dropdown-active');
+        }
+      });
+
+      // Keep menu open when moving to dropdown
+      const dropdown = item.querySelector('.mega-menu__dropdown');
+      if (dropdown) {
+        dropdown.addEventListener('mouseenter', () => {
+          if (window.innerWidth > 989) {
+            item.classList.add('dropdown-active');
+          }
+        });
+
+        dropdown.addEventListener('mouseleave', () => {
+          if (window.innerWidth > 989) {
+            item.classList.remove('dropdown-active');
+          }
+        });
+      }
+    });
+
+    // Mobile touch functionality
+    menuItems.forEach(item => {
+      const menuLink = item.querySelector('> a');
+
+      menuLink.addEventListener('click', (e) => {
+        if (window.innerWidth <= 989) {
+          e.preventDefault();
+          const isActive = item.classList.contains('dropdown-active');
+
+          // Close all other menus
+          menuItems.forEach(otherItem => {
+            if (otherItem !== item) {
+              otherItem.classList.remove('dropdown-active');
+            }
+          });
+
+          // Toggle current menu
+          item.classList.toggle('dropdown-active', !isActive);
+        }
+      });
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.mega-menu')) {
+        menuItems.forEach(item => {
+          item.classList.remove('dropdown-active');
+        });
+      }
+    });
+
+    // Close menu on ESC key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        menuItems.forEach(item => {
+          item.classList.remove('dropdown-active');
+        });
+      }
+    });
+  });
+</script>

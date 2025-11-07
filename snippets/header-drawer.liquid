@@ -1,0 +1,719 @@
+{% comment %} Add this after the header__icons div {% endcomment %}
+{%- assign mobile_menu = section.settings.menu -%}
+{%- assign image_blocks = section.blocks | where: 'type', 'menu_images' -%}
+
+<!-- Mobile Navigation -->
+<div class="mobile-nav">
+  <div class="mobile-nav-toggle">
+    <button class="hamburger" aria-label="Toggle Menu">
+      <span class="hamburger-box">
+        <span class="hamburger-inner"></span>
+      </span>
+    </button>
+  </div>
+
+  <div class="mobile-menu-container">
+    <div class="mobile-menu-overlay"></div>
+
+    <div class="mobile-menu-wrapper">
+      <div class="mobile-menu-header">
+        <div class="mobile-logo">
+          {% if settings.logo != blank %}
+            <a href="/">
+              {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
+              {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
+              {{
+                settings.logo
+                | image_url: width: 300
+                | image_tag:
+                  class: 'header__heading-logo',
+                  width: settings.logo_width,
+                  height: logo_height,
+                  alt: logo_alt
+              }}
+            </a>
+          {% else %}
+            <a href="/">{{ shop.name }}</a>
+          {% endif %}
+        </div>
+        <button class="close-mobile-menu" aria-label="Close Menu">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <nav class="mobile-mega-menu">
+        <ul class="mobile-mega-menu__list">
+          {% for link in linklists[mobile_menu].links %}
+            {%- assign has_children = false -%}
+            {%- if link.links != blank -%}
+              {%- assign has_children = true -%}
+            {%- endif -%}
+
+            <li
+              class="mobile-mega-menu__item{% if has_children %} has-dropdown{% endif %}"
+              data-menu-title="{{ link.title | handleize }}"
+            >
+              <div class="mobile-menu-link-wrapper">
+                <a href="{{ link.url }}" class="mobile-mega-menu__parent-link">{{ link.title }}</a>
+                {% if has_children %}
+                  <button class="mobile-dropdown-toggle" aria-expanded="false">
+                    <svg class="icon icon-plus" width="12" height="12" viewBox="0 0 12 12">
+                      <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                    </svg>
+                    <svg class="icon icon-minus" width="12" height="12" viewBox="0 0 12 12" style="display: none;">
+                      <path d="M1 6h10" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                    </svg>
+                  </button>
+                {% endif %}
+              </div>
+
+              {% if has_children %}
+                <div class="mobile-mega-menu__dropdown">
+                  <div class="mobile-mega-menu__container">
+                    <div class="mobile-mega-menu__columns">
+                      {% for child_link in link.links %}
+                        <div class="mobile-mega-menu__column">
+                          <div class="mobile-submenu-link-wrapper">
+                            <a href="{{ child_link.url }}" class="mobile-mega-menu__subtitle">{{ child_link.title }}</a>
+                            {% if child_link.links != blank %}
+                              <button class="mobile-dropdown-toggle child-toggle" aria-expanded="false">
+                                <svg class="icon icon-plus" width="10" height="10" viewBox="0 0 10 10">
+                                  <path d="M5 1v8M1 5h8" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                </svg>
+                                <svg
+                                  class="icon icon-minus"
+                                  width="10"
+                                  height="10"
+                                  viewBox="0 0 10 10"
+                                  style="display: none;"
+                                >
+                                  <path d="M1 5h8" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                </svg>
+                              </button>
+                            {% endif %}
+                          </div>
+
+                          {% if child_link.links != blank %}
+                            <ul class="mobile-mega-menu__child-list">
+                              {% for grandchild_link in child_link.links %}
+                                <li class="mobile-mega-menu__grandchild">
+                                  <a href="{{ grandchild_link.url }}">{{ grandchild_link.title }}</a>
+                                </li>
+                              {% endfor %}
+                            </ul>
+                          {% endif %}
+                        </div>
+                      {% endfor %}
+                    </div>
+
+                    {% comment %} Image block rendering {% endcomment %}
+                    {%- assign menu_handle = link.title | handleize -%}
+                    {% for block in image_blocks %}
+                      {%- assign target_menu = block.settings.menu_item | handleize -%}
+                      {%- if target_menu == menu_handle -%}
+                        <div class="mobile-mega-menu__image-block">
+                          {% comment %} <h4 class="mobile-image-block-title">{{ block.settings.title | default: 'Featured' }}</h4> {% endcomment %}
+                          <div class="mobile-image-block-grid">
+                            {% for i in (1..3) %}
+                              {%- liquid
+                                assign image_key = 'image_' | append: i
+                                assign image = block.settings[image_key]
+                                assign link_key = 'link_' | append: i
+                                assign image_link = block.settings[link_key]
+                                assign text_key = 'text_' | append: i
+                                assign image_text = block.settings[text_key]
+                              -%}
+                              {% if image != blank %}
+                                <div class="mobile-mega-menu__image">
+                                  {% if image_link != blank %}<a href="{{ image_link }}" class="image-link">{% endif %}
+                                  <div class="image-wrapper">
+                                    <img
+                                      src="{{ image | img_url: '300x' }}"
+                                      alt="{{ image.alt | escape }}"
+                                      loading="lazy"
+                                      width="300"
+                                      height="{{ 300 | divided_by: image.aspect_ratio | round }}"
+                                    >
+                                  </div>
+                                  {% if image_text != blank %}
+                                    <div class="image-caption">{{ image_text }}</div>
+                                  {% endif %}
+                                  {% if image_link != blank %}</a>{% endif %}
+                                </div>
+                              {% endif %}
+                            {% endfor %}
+                          </div>
+                        </div>
+                      {%- endif -%}
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endif %}
+            </li>
+          {% endfor %}
+
+          <!-- Additional mobile menu items -->
+
+          {% comment %}
+                {% if shop.customer_accounts_enabled %}
+                <li class="mobile-mega-menu__item">
+                  <a
+                    href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
+                    class="mobile-mega-menu__parent-link"
+                  >
+                    {%- liquid
+                      if customer
+                        echo 'customer.account_fallback' | t
+                      else
+                        echo 'customer.log_in' | t
+                      endif
+                    -%}
+                  </a>
+                </li>
+              {% endif %}
+
+.
+            <li class="mobile-mega-menu__item">
+              <a href="{{ routes.cart_url }}" class="mobile-mega-menu__parent-link"
+                ><span class="svg-wrapper">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" class="icon icon-cart-empty" viewBox="0 0 40 40">
+                    <path fill="currentColor" fill-rule="evenodd" d="M15.75 11.8h-3.16l-.77 11.6a5 5 0 0 0 4.99 5.34h7.38a5 5 0 0 0 4.99-5.33L28.4 11.8zm0 1h-2.22l-.71 10.67a4 4 0 0 0 3.99 4.27h7.38a4 4 0 0 0 4-4.27l-.72-10.67h-2.22v.63a4.75 4.75 0 1 1-9.5 0zm8.5 0h-7.5v.63a3.75 3.75 0 1 0 7.5 0z"></path>
+                  </svg></span
+              ></a>
+            </li>
+          {% endcomment %}
+           <li><a class="mobile-mega-menu__parent-link" href="/blogs/news">Blogs</a></li>
+           <li><a class="mobile-mega-menu__parent-link" href="/pages/faq">FAQs</a></li>
+           <li><a class="mobile-mega-menu__parent-link" href="/pages/contact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <div class="mobile-menu-footer">
+        {% if section.settings.contact_info != blank %}
+          <div class="mobile-contact-info">
+            <p>{{ section.settings.contact_info }}</p>
+          </div>
+        {% endif %}
+        <div class="mobile-social-links">
+          {% if settings.social_facebook_link != blank %}
+            <a href="{{ settings.social_facebook_link }}" target="_blank" aria-label="Facebook">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+              </svg>
+            </a>
+          {% endif %}
+          {% if settings.social_instagram_link != blank %}
+            <a href="{{ settings.social_instagram_link }}" target="_blank" aria-label="Instagram">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="none"/>
+                <circle cx="12" cy="12" r="5" stroke="none"/>
+                <circle cx="18" cy="6" r="1" stroke="none"/>
+              </svg>
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Mobile Navigation Styles */
+  .mobile-nav {
+    position: relative;
+    z-index: 10000;
+  }
+
+  /* Mobile Menu Toggle */
+  .mobile-nav-toggle {
+    display: none;
+  }
+
+  .hamburger {
+    padding: 15px;
+    display: inline-block;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    margin: 0;
+  }
+
+  .hamburger-box {
+    width: 30px;
+    height: 24px;
+    display: inline-block;
+    position: relative;
+  }
+
+  .hamburger-inner {
+    display: block;
+    top: 50%;
+    margin-top: -2px;
+  }
+
+  .hamburger-inner,
+  .hamburger-inner::before,
+  .hamburger-inner::after {
+    width: 20px;
+    height: 1px;
+    background-color: #333;
+    border-radius: 4px;
+    position: absolute;
+    transition-property: transform;
+    transition-duration: 0.15s;
+    transition-timing-function: ease;
+  }
+
+  .hamburger-inner::before,
+  .hamburger-inner::after {
+    content: "";
+    display: block;
+  }
+
+  .hamburger-inner::before {
+    top: -5px;
+  }
+
+  .hamburger-inner::after {
+    bottom: -5px;
+  }
+
+  /* Mobile Menu Container */
+  .mobile-menu-container {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    transition: left 0.4s ease;
+  }
+
+  .mobile-menu-container.active {
+    left: 0;
+  }
+
+  .mobile-menu-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .mobile-menu-container.active .mobile-menu-overlay {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .mobile-menu-wrapper {
+    position: absolute;
+    top: 5%;
+    left: 0;
+    width: 100%;
+    {% comment %} max-width: 400px; {% endcomment %}
+    height: 100%;
+    background: #fff;
+    overflow-y: auto;
+    z-index: 10001;
+    transform: translateX(-100%);
+    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mobile-menu-container.active .mobile-menu-wrapper {
+    transform: translateX(0);
+  }
+
+  .mobile-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 15px;
+    border-bottom: 1px solid #eee;
+    background: #f9f9f9;
+  }
+
+  .close-mobile-menu {
+    background: none;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    color: #333;
+    transition: transform 0.3s ease;
+  }
+
+  .close-mobile-menu:hover {
+    transform: rotate(90deg);
+  }
+
+  /* Mobile Mega Menu Styles */
+  .mobile-mega-menu__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1;
+  }
+
+  .mobile-mega-menu__item {
+    border-bottom: 1px solid #f5f5f5;
+  }
+
+  .mobile-menu-link-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.2s;
+  }
+
+  .mobile-menu-link-wrapper:hover {
+    background-color: #f9f9f9;
+  }
+
+  .mobile-mega-menu__parent-link {
+    display: block;
+    padding: 15px 20px;
+    text-decoration: none;
+    font-weight: 500;
+    color: #333;
+    flex-grow: 1;
+    transition: color 0.2s;
+  }
+
+  .mobile-mega-menu__parent-link:hover {
+    color: #d32f2f;
+  }
+
+  .mobile-dropdown-toggle {
+    background: none;
+    border: none;
+    padding: 15px 20px;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.2s;
+  }
+
+  .mobile-dropdown-toggle:hover {
+    color: #d32f2f;
+  }
+
+  .mobile-mega-menu__dropdown {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+
+  .mobile-mega-menu__item.active .mobile-mega-menu__dropdown {
+    max-height: 3000px;
+  }
+
+  .mobile-mega-menu__container {
+    padding: 0 15px 15px;
+  }
+
+  .mobile-mega-menu__columns {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-left: 15px;
+  }
+
+  .mobile-mega-menu__column {
+    padding: 0px 0;
+  }
+
+  .mobile-submenu-link-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.2s;
+  }
+
+  .mobile-submenu-link-wrapper:hover {
+    background-color: #f9f9f9;
+  }
+
+  .mobile-mega-menu__subtitle {
+    display: block;
+    font-weight: 500;
+    color: #555;
+    text-decoration: none;
+    padding: 0px 0;
+    transition: color 0.2s;
+  }
+
+  .mobile-mega-menu__subtitle:hover {
+    color: #d32f2f;
+  }
+
+  .mobile-mega-menu__child-list {
+    list-style: none;
+    padding: 0 0 0 15px;
+    margin: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .mobile-mega-menu__child-list.active {
+    max-height: 1000px;
+  }
+
+  .mobile-mega-menu__grandchild a {
+    display: block;
+    padding: 8px 0;
+    text-decoration: none;
+    color: #777;
+    font-size: 14px;
+    transition: color 0.2s;
+  }
+
+  .mobile-mega-menu__grandchild a:hover {
+    color: #d32f2f;
+    padding-left: 5px;
+  }
+
+  /* Image Block Styles for Mobile */
+  .mobile-mega-menu__image-block {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+  }
+
+  .mobile-image-block-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 15px 0;
+    color: #333;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .mobile-image-block-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .mobile-mega-menu__image {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+  }
+
+  .mobile-mega-menu__image:hover {
+    transform: translateY(-3px);
+  }
+
+  .mobile-mega-menu__image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.5s ease;
+  }
+
+  .mobile-mega-menu__image:hover img {
+    transform: scale(1.05);
+  }
+
+  .image-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 6px 10px;
+    font-size: 12px;
+    text-align: center;
+  }
+
+  /* Mobile Menu Footer */
+  .mobile-menu-footer {
+    padding: 20px 15px;
+    border-top: 1px solid #eee;
+    margin-top: auto;
+    background: #f9f9f9;
+  }
+
+  .mobile-contact-info {
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+  }
+
+  .mobile-social-links {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .mobile-social-links a {
+    color: #333;
+    transition: color 0.2s;
+  }
+
+  .mobile-social-links a:hover {
+    color: #d32f2f;
+  }
+
+  /* Responsive Styles */
+  @media (max-width: 989px) {
+    .mobile-nav-toggle {
+      display: block;
+    }
+
+    /* Hide desktop mega menu on mobile */
+    .mega-menu {
+      display: none;
+    }
+
+    .header__icons .header__icon--account {
+      display: none;
+    }
+  }
+
+  @media (min-width: 990px) {
+    .mobile-nav {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Mobile Menu Toggle
+    const hamburger = document.querySelector('.mobile-nav .hamburger');
+    const mobileMenuContainer = document.querySelector('.mobile-menu-container');
+    const closeMobileMenu = document.querySelector('.close-mobile-menu');
+    const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+
+    // Function to open mobile menu
+    function openMobileMenu() {
+      mobileMenuContainer.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    // Function to close mobile menu
+    function closeMobileMenuFunc() {
+      mobileMenuContainer.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    if (hamburger) {
+      hamburger.addEventListener('click', openMobileMenu);
+    }
+
+    if (closeMobileMenu) {
+      closeMobileMenu.addEventListener('click', closeMobileMenuFunc);
+    }
+
+    if (mobileMenuOverlay) {
+      mobileMenuOverlay.addEventListener('click', closeMobileMenuFunc);
+    }
+
+    // Mobile Menu Accordion
+    const mobileDropdownToggles = document.querySelectorAll('.mobile-dropdown-toggle');
+
+    mobileDropdownToggles.forEach(toggle => {
+      toggle.addEventListener('click', function() {
+        const parentItem = this.closest('.mobile-mega-menu__item');
+        const isChildToggle = this.classList.contains('child-toggle');
+
+        if (isChildToggle) {
+          // Toggle child list
+          const childList = this.closest('.mobile-mega-menu__column').querySelector('.mobile-mega-menu__child-list');
+          if (childList) {
+            childList.classList.toggle('active');
+
+            // Toggle icons
+            const plusIcon = this.querySelector('.icon-plus');
+            const minusIcon = this.querySelector('.icon-minus');
+
+            if (childList.classList.contains('active')) {
+              plusIcon.style.display = 'none';
+              minusIcon.style.display = 'block';
+            } else {
+              plusIcon.style.display = 'block';
+              minusIcon.style.display = 'none';
+            }
+          }
+        } else {
+          // Toggle main dropdown
+          parentItem.classList.toggle('active');
+
+          // Toggle icons
+          const plusIcon = this.querySelector('.icon-plus');
+          const minusIcon = this.querySelector('.icon-minus');
+
+          if (parentItem.classList.contains('active')) {
+            plusIcon.style.display = 'none';
+            minusIcon.style.display = 'block';
+          } else {
+            plusIcon.style.display = 'block';
+            minusIcon.style.display = 'none';
+          }
+
+          // Close all other dropdowns at the same level
+          const allItems = parentItem.parentElement.children;
+          Array.from(allItems).forEach(item => {
+            if (item !== parentItem) {
+              item.classList.remove('active');
+              const otherToggle = item.querySelector('.mobile-dropdown-toggle:not(.child-toggle)');
+              if (otherToggle) {
+                otherToggle.querySelector('.icon-plus').style.display = 'block';
+                otherToggle.querySelector('.icon-minus').style.display = 'none';
+              }
+            }
+          });
+        }
+      });
+    });
+
+    // Close menu when clicking outside on mobile
+    document.addEventListener('click', function(event) {
+      if (mobileMenuContainer.classList.contains('active') &&
+          !event.target.closest('.mobile-menu-wrapper') &&
+          !event.target.closest('.hamburger')) {
+        closeMobileMenuFunc();
+      }
+    });
+
+    // Close menu on ESC key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape' && mobileMenuContainer.classList.contains('active')) {
+        closeMobileMenuFunc();
+      }
+    });
+
+    // Close menu when navigating
+    document.querySelectorAll('.mobile-mega-menu__parent-link, .mobile-mega-menu__subtitle, .mobile-mega-menu__grandchild a').forEach(link => {
+      link.addEventListener('click', function(e) {
+        if (!this.classList.contains('has-dropdown')) {
+          closeMobileMenuFunc();
+        }
+      });
+    });
+  });
+</script>

@@ -1,0 +1,559 @@
+{% comment %}
+  Hero Banner Section with Image & Text
+  Fully customizable through Shopify Theme Editor
+{% endcomment %}
+
+<div class="hero-banner-section section-{{ section.id }}">
+  <div class="hero-container 
+              image-position-{{ section.settings.image_position_desktop }}
+              image-position-mobile-{{ section.settings.image_position_mobile }}
+              content-align-{{ section.settings.content_alignment_desktop }}
+              content-align-mobile-{{ section.settings.content_alignment_mobile }}">
+    
+    <div class="hero-content">
+      <div class="content-wrapper">
+        {% if section.settings.heading != blank %}
+          <h2 class="hero-heading" style="
+            color: {{ section.settings.heading_color }};
+            font-size: {{ section.settings.heading_size_desktop }}px;
+          ">
+            {{ section.settings.heading }}
+          </h2>
+        {% endif %}
+
+        {% if section.settings.subheading != blank %}
+          <p class="hero-subheading" style="
+            color: {{ section.settings.subheading_color }};
+            font-size: {{ section.settings.subheading_size_desktop }}px;
+          ">
+            {{ section.settings.subheading }}
+          </p>
+        {% endif %}
+
+        {% if section.settings.button_text != blank %}
+          <div class="hero-button-wrapper">
+            <a href="{{ section.settings.button_link }}" 
+               class="hero-button"
+               style="
+                 background-color: {{ section.settings.button_background }};
+                 color: {{ section.settings.button_text_color }};
+               ">
+              {{ section.settings.button_text }}
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="hero-image">
+      {% if section.settings.image != blank %}
+        {{ section.settings.image | image_url: width: 1200 | image_tag: 
+           loading: 'lazy',
+           alt: section.settings.image.alt | default: section.settings.heading
+        }}
+      {% else %}
+        <div class="hero-image-placeholder">
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .hero-banner-section {
+    width: 100%;
+    overflow: hidden;
+    background-color: {{ section.settings.content_background }};
+  }
+
+  .hero-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: {{ section.settings.section_height_desktop }}px;
+    max-width: 100%;
+  }
+
+  /* Desktop Image Position */
+  .image-position-left .hero-content {
+    order: 2;
+  }
+
+  .image-position-left .hero-image {
+    order: 1;
+  }
+
+  .image-position-right .hero-content {
+    order: 1;
+  }
+
+  .image-position-right .hero-image {
+    order: 2;
+  }
+
+  /* Content Section */
+  .hero-content {
+    display: flex;
+    padding: 60px 80px;
+    background-color: {{ section.settings.content_background }};
+  }
+
+  .content-wrapper {
+    width: 100%;
+    max-width: 600px;
+  }
+
+  /* Desktop Content Alignment */
+  .content-align-top .hero-content {
+    align-items: flex-start;
+  }
+
+  .content-align-center .hero-content {
+    align-items: center;
+  }
+
+  .content-align-bottom .hero-content {
+    align-items: flex-end;
+  }
+
+  /* Text Styles */
+  .hero-heading {
+    font-weight: {{ section.settings.heading_font_weight }};
+    line-height: 1.2;
+    margin-bottom: 20px;
+    word-wrap: break-word;
+  }
+
+  .hero-subheading {
+    line-height: 1.6;
+    margin-bottom: 30px;
+    word-wrap: break-word;
+  }
+
+  /* Button Styles */
+  .hero-button-wrapper {
+    display: inline-block;
+  }
+
+  .hero-button {
+    display: inline-block;
+    padding: 16px 40px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+  }
+
+  .hero-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    opacity: 0.9;
+  }
+
+  /* Image Section */
+  .hero-image {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .hero-image-placeholder {
+    width: 100%;
+    height: 100%;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-image-placeholder svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  /* Tablet View */
+  @media screen and (max-width: 1024px) {
+    .hero-content {
+      padding: 50px 40px;
+    }
+
+    .hero-heading {
+      font-size: calc({{ section.settings.heading_size_desktop }}px * 0.85);
+    }
+
+    .hero-subheading {
+      font-size: calc({{ section.settings.subheading_size_desktop }}px * 0.9);
+    }
+  }
+
+  /* Mobile View */
+  @media screen and (max-width: 768px) {
+    .hero-container {
+      grid-template-columns: 1fr;
+      min-height: {{ section.settings.section_height_mobile }}px;
+    }
+
+    /* Mobile Image Position */
+    .image-position-mobile-top .hero-content {
+      order: 2;
+    }
+
+    .image-position-mobile-top .hero-image {
+      order: 1;
+    }
+
+    .image-position-mobile-bottom .hero-content {
+      order: 1;
+    }
+
+    .image-position-mobile-bottom .hero-image {
+      order: 2;
+    }
+
+    .hero-content {
+      padding: 40px 24px;
+      min-height: auto;
+    }
+
+    .content-wrapper {
+      max-width: 100%;
+    }
+
+    /* Mobile Content Alignment */
+    .content-align-mobile-top .hero-content {
+      align-items: flex-start;
+    }
+
+    .content-align-mobile-center .hero-content {
+      align-items: center;
+      text-align: center;
+    }
+
+    .content-align-mobile-bottom .hero-content {
+      align-items: flex-end;
+      text-align: right;
+    }
+
+    .content-align-mobile-left .hero-content {
+      text-align: left;
+    }
+
+    .content-align-mobile-center .hero-button-wrapper,
+    .content-align-mobile-bottom .hero-button-wrapper {
+      width: 100%;
+      text-align: center;
+    }
+
+    /* Mobile Text Sizes */
+    .hero-heading {
+      font-size: {{ section.settings.heading_size_mobile }}px !important;
+      margin-bottom: 16px;
+    }
+
+    .hero-subheading {
+      font-size: {{ section.settings.subheading_size_mobile }}px !important;
+      margin-bottom: 24px;
+    }
+
+    .hero-image {
+      min-height: 300px;
+    }
+
+    .hero-button {
+      padding: 14px 32px;
+      font-size: 15px;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .hero-content {
+      padding: 30px 20px;
+    }
+
+    .hero-image {
+      min-height: 250px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Text with Image Custom",
+  "tag": "section",
+  "class": "section-hero-banner",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content Settings"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Lorem Ipsum is simply "
+    },
+    {
+      "type": "header",
+      "content": "Button Settings"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Desktop Layout"
+    },
+    {
+      "type": "select",
+      "id": "image_position_desktop",
+      "label": "Image Position (Desktop)",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment_desktop",
+      "label": "Content Vertical Alignment (Desktop)",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "section_height_desktop",
+      "min": 400,
+      "max": 900,
+      "step": 50,
+      "unit": "px",
+      "label": "Section Height (Desktop)",
+      "default": 600
+    },
+    {
+      "type": "header",
+      "content": "Mobile Layout"
+    },
+    {
+      "type": "select",
+      "id": "image_position_mobile",
+      "label": "Image Position (Mobile)",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": "top"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment_mobile",
+      "label": "Content Alignment (Mobile)",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "left",
+          "label": "Left Aligned"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "section_height_mobile",
+      "min": 300,
+      "max": 700,
+      "step": 50,
+      "unit": "px",
+      "label": "Minimum Section Height (Mobile)",
+      "default": 500
+    },
+    {
+      "type": "header",
+      "content": "Heading Style"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "min": 20,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading Size (Desktop)",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "min": 18,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading Size (Mobile)",
+      "default": 28
+    },
+    {
+      "type": "select",
+      "id": "heading_font_weight",
+      "label": "Heading Font Weight",
+      "options": [
+        {
+          "value": "300",
+          "label": "Light"
+        },
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi Bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "header",
+      "content": "Subheading Style"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading Color",
+      "default": "#666666"
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_desktop",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Subheading Size (Desktop)",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_mobile",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Subheading Size (Mobile)",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Background Colors"
+    },
+    {
+      "type": "color",
+      "id": "content_background",
+      "label": "Content Background Color",
+      "default": "#5DBFBE"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Text with Image Custom",
+      "settings": {
+        "heading": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+        "button_text": "Shop Now",
+        "content_background": "#5DBFBE",
+        "button_background": "#ffffff",
+        "button_text_color": "#000000"
+      }
+    }
+  ]
+}
+{% endschema %}

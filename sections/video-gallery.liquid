@@ -1,0 +1,193 @@
+{% schema %}
+{
+  "name": "Video Gallery",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_arrows_mobile",
+      "label": "Enable Arrows on Mobile",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "video-heading",
+      "label": "Section Heading"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "video",
+      "name": "Video Block",
+      "settings": [
+        { "type": "url",  "id": "video_url",  "label": "Video URL (MP4)" },
+        { "type": "text", "id": "video_link", "label": "Video Embed Link" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Video Gallery", "category": "Custom" }
+  ]
+}
+{% endschema %}
+
+<div class="desktop-video video-gallery-section">
+  <h1 class="video-heading">{{ section.settings['video-heading'] }}</h1>
+
+  <div class="video-carousel-wrapper">
+    {% if section.settings.enable_arrows_mobile %}
+      <button class="carousel-nav prev" aria-label="Previous">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15.5 4.5 8 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+      </button>
+    {% endif %}
+
+    <div class="video-carousel-track" id="videoCarouselTrack">
+      {% for block in section.blocks %}
+        <div class="video-carousel-item">
+          {% if block.settings.video_url %}
+            <video class="video" autoplay muted loop playsinline>
+              <source src="{{ block.settings.video_url }}" type="video/mp4">
+            </video>
+          {% elsif block.settings.video_link %}
+            <iframe
+              class="video"
+              src="{{ block.settings.video_link }}"
+              frameborder="0"
+              allow="autoplay; fullscreen"
+              allowfullscreen
+            ></iframe>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if section.settings.enable_arrows_mobile %}
+      <button class="carousel-nav next" aria-label="Next"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M8.5 4.5 16 12l-7.5 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></button>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+    .video-gallery-section {
+      padding: 40px 0;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .video-heading {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 24px;
+    }
+
+    .video-carousel-wrapper {
+      position: relative;
+      max-width: 1400px;
+      margin: auto;
+      padding: 0 10px;
+    }
+
+    .video-carousel-track {
+      display: flex;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      gap: 12px;
+      scrollbar-width: none; /* Firefox */
+    }
+
+    .video-carousel-item {
+      flex: 0 0 auto;
+      width: 80%;
+    }
+  .video-carousel-track::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+  }
+    @media (min-width: 640px) {
+      .video-carousel-item {
+        width: 48%;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .video-carousel-item {
+        width: 32%;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .video-carousel-item {
+        width: 19%;
+      }
+      .carousel-nav {
+    display: none !important;
+  }
+    }
+
+    .video {
+      width: 100%;
+      aspect-ratio: 9/16;
+      border-radius: 16px;
+      object-fit: cover;
+    }
+
+    .carousel-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background:rgb(255, 255, 255);
+      color: black;
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      z-index: 1;
+    }
+
+    .carousel-nav.prev {
+      left: 0;
+    }
+
+    .carousel-nav.next {
+      right: 0;
+    }
+
+    @media (min-width: 640px) {
+      .carousel-nav {
+        display: block;
+      }
+    }
+
+    @media (max-width: 639px) {
+      {% unless section.settings.enable_arrows_mobile %}
+      .carousel-nav {
+        display: none;
+      }
+      {% endunless %}
+    }
+    button.carousel-nav {
+    padding: 0px !important;
+}
+button.carousel-nav:hover {
+    background: #c5930a;
+    color: white;
+}
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const track = document.getElementById("videoCarouselTrack");
+    const next = document.querySelector(".carousel-nav.next");
+    const prev = document.querySelector(".carousel-nav.prev");
+
+    function scrollByItem(dir = 'next') {
+      const item = track.querySelector(".video-carousel-item");
+      if (!item) return;
+      const scrollAmount = item.offsetWidth + 12;
+      track.scrollLeft += dir === 'next' ? scrollAmount : -scrollAmount;
+    }
+
+    if (next) next.addEventListener("click", () => scrollByItem("next"));
+    if (prev) prev.addEventListener("click", () => scrollByItem("prev"));
+  });
+</script>

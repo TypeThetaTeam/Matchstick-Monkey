@@ -1,0 +1,407 @@
+{% schema %}
+{
+  "name": "Hero Banner with Overlay",
+  "settings": [
+    {
+      "type": "header",
+      "content": "🖥️ Desktop Image Recommendation"
+    },
+    {
+      "type": "paragraph",
+      "content": "Use an image around **1920x800px** for best desktop results."
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image_desktop",
+      "label": "Hero Image (Desktop)"
+    },
+    {
+      "type": "select",
+      "id": "hero_image_desktop_size",
+      "label": "Desktop Image Display Size",
+      "default": "full",
+      "options": [
+        { "value": "small", "label": "Small (cropped height)" },
+        { "value": "large", "label": "Large (taller height)" },
+        { "value": "full", "label": "Full height (fills viewport)" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "📱 Mobile Image Recommendation"
+    },
+    {
+      "type": "paragraph",
+      "content": "Use an image around **800x1000px** (portrait or square) for best mobile results."
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image_mobile",
+      "label": "Hero Image (Mobile)"
+    },
+    {
+      "type": "select",
+      "id": "hero_image_mobile_size",
+      "label": "Mobile Image Display Size",
+      "default": "large",
+      "options": [
+        { "value": "small", "label": "Small (cropped height)" },
+        { "value": "large", "label": "Large (fits screen nicely)" },
+        { "value": "full", "label": "Full height (fills viewport)" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Spark Imagination with Every Toy!"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Discover safe, colourful, and creative toys designed to inspire endless fun and learning for your little ones."
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "select",
+      "id": "vertical_alignment",
+      "label": "Vertical Alignment",
+      "default": "center",
+      "options": [
+        { "value": "top", "label": "Top" },
+        { "value": "center", "label": "Center" },
+        { "value": "bottom", "label": "Bottom" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "horizontal_alignment",
+      "label": "Horizontal Alignment",
+      "default": "center",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Banner with Overlay",
+      "category": "Banner"
+    }
+  ]
+}
+{% endschema %}
+
+{% comment %} Alignment classes {% endcomment %}
+{% assign vert_class = 'align-vertical-' | append: section.settings.vertical_alignment %}
+{% assign horz_class = 'align-horizontal-' | append: section.settings.horizontal_alignment %}
+
+{% comment %} Desktop height class {% endcomment %}
+{% case section.settings.hero_image_desktop_size %}
+  {% when 'small' %}
+    {% assign desktop_height = 'hero--desktop-small' %}
+  {% when 'large' %}
+    {% assign desktop_height = 'hero--desktop-large' %}
+  {% else %}
+    {% assign desktop_height = 'hero--desktop-full' %}
+{% endcase %}
+
+{% comment %} Mobile height class {% endcomment %}
+{% case section.settings.hero_image_mobile_size %}
+  {% when 'small' %}
+    {% assign mobile_height = 'hero--mobile-small' %}
+  {% when 'large' %}
+    {% assign mobile_height = 'hero--mobile-large' %}
+  {% else %}
+    {% assign mobile_height = 'hero--mobile-full' %}
+{% endcase %}
+
+<div class="hero-banner {{ desktop_height }} {{ mobile_height }}">
+  {% if section.settings.hero_image_desktop %}
+    <img
+      src="{{ section.settings.hero_image_desktop | img_url: 'master' }}"
+      alt="{{ section.settings.heading | escape }}"
+      class="hero-banner__image hero-banner__image--desktop"
+      loading="eager"
+    >
+  {% endif %}
+  
+  {% if section.settings.hero_image_mobile %}
+    <img
+      src="{{ section.settings.hero_image_mobile | img_url: 'master' }}"
+      alt="{{ section.settings.heading | escape }}"
+      class="hero-banner__image hero-banner__image--mobile"
+      loading="eager"
+    >
+  {% endif %}
+
+  <div class="hero-banner__overlay"></div>
+
+  <div class="hero-banner__content {{ vert_class }} {{ horz_class }}">
+    <div class="hero-banner__inner">
+      {% if section.settings.heading != blank %}
+        <h1 class="hero-banner__heading">{{ section.settings.heading }}</h1>
+      {% endif %}
+      
+      {% if section.settings.text != blank %}
+        <p class="hero-banner__text">{{ section.settings.text }}</p>
+      {% endif %}
+      
+      {% if section.settings.button_link != blank and section.settings.button_text != blank %}
+        <a href="{{ section.settings.button_link }}" class="hero-banner__btn">
+          {{ section.settings.button_text }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+/* === Hero Banner Base Styles === */
+.hero-banner {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+}
+
+/* === Image Styles === */
+.hero-banner__image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: none;
+  z-index: 0;
+}
+
+/* === Desktop Styles (750px and above) === */
+@media screen and (min-width: 750px) {
+  .hero-banner__image--desktop {
+    display: block;
+  }
+  
+  .hero-banner__image--mobile {
+    display: none;
+  }
+  
+  .hero-banner.hero--desktop-small {
+    height: 450px;
+  }
+  
+  .hero-banner.hero--desktop-large {
+    height: 650px;
+  }
+  
+  .hero-banner.hero--desktop-full {
+    height: 100vh;
+    min-height: 500px;
+  }
+}
+
+/* === Mobile Styles (below 750px) === */
+@media screen and (max-width: 749px) {
+  .hero-banner__image--desktop {
+    display: none;
+  }
+  
+  .hero-banner__image--mobile {
+    display: block;
+  }
+  
+  .hero-banner.hero--mobile-small {
+    height: 350px;
+  }
+  
+  .hero-banner.hero--mobile-large {
+    height: 500px;
+  }
+  
+  .hero-banner.hero--mobile-full {
+    height: 100vh;
+    min-height: 400px;
+  }
+}
+
+/* === Overlay === */
+.hero-banner__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+/* === Content Container === */
+.hero-banner__content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  padding: 2rem 1rem;
+}
+
+.hero-banner__inner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* === Vertical Alignment === */
+.hero-banner__content.align-vertical-top {
+  align-items: flex-start;
+  padding-top: 4rem;
+}
+
+.hero-banner__content.align-vertical-center {
+  align-items: center;
+}
+
+.hero-banner__content.align-vertical-bottom {
+  align-items: flex-end;
+  padding-bottom: 4rem;
+}
+
+/* === Horizontal Alignment === */
+.hero-banner__content.align-horizontal-left {
+  text-align: left;
+}
+
+.hero-banner__content.align-horizontal-left .hero-banner__inner {
+  margin-left: 0;
+}
+
+.hero-banner__content.align-horizontal-center {
+  text-align: center;
+}
+
+.hero-banner__content.align-horizontal-right {
+  text-align: right;
+}
+
+.hero-banner__content.align-horizontal-right .hero-banner__inner {
+  margin-right: 0;
+}
+
+/* === Text Styles === */
+.hero-banner__heading {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 1rem 0;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.hero-banner__text {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  margin: 0 0 1.5rem 0;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+  max-width: 700px;
+}
+
+.hero-banner__content.align-horizontal-center .hero-banner__text {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-banner__content.align-horizontal-right .hero-banner__text {
+  margin-left: auto;
+}
+
+/* === Button Styles === */
+.hero-banner__btn {
+  display: inline-block;
+  background: #c3daf0;
+  color: #000;
+  padding: 0.75rem 1.75rem;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.hero-banner__btn:hover {
+  background: #b1c9e2;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* === Tablet Styles === */
+@media screen and (max-width: 999px) {
+  .hero-banner__heading {
+    font-size: 2.2rem;
+  }
+  
+  .hero-banner__text {
+    font-size: 1.1rem;
+  }
+  
+  .hero-banner__content {
+    padding: 1.5rem 1rem;
+  }
+}
+
+/* === Mobile Styles === */
+@media screen and (max-width: 749px) {
+  .hero-banner__heading {
+    font-size: 1.8rem;
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+  }
+  
+  .hero-banner__text {
+    font-size: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  .hero-banner__btn {
+    padding: 0.65rem 1.5rem;
+    font-size: 0.95rem;
+  }
+  
+  .hero-banner__content.align-vertical-top {
+    padding-top: 3rem;
+  }
+  
+  .hero-banner__content.align-vertical-bottom {
+    padding-bottom: 3rem;
+  }
+}
+
+/* === Small Mobile Styles === */
+@media screen and (max-width: 480px) {
+  .hero-banner__heading {
+    font-size: 1.5rem;
+  }
+  
+  .hero-banner__text {
+    font-size: 0.95rem;
+  }
+}
+{% endstylesheet %}
