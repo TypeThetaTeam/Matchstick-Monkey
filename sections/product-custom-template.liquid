@@ -27,37 +27,38 @@ based entirely on tag images (tag_product-handle.png).
     {%- form 'product', product, class: 'ProductCustom__Form', id: 'CustomProductForm' -%}
       <input type="hidden" name="id" value="{{ variant.id }}">
 
+   
       <!-- Colour Swatches -->
-      {% assign product_tags = product.tags | join:',' %}
-      {% if product_tags contains 'product_' %}
-        <div class="ProductCustom__ColorSwatches">
-          <span class="ProductForm__Label">Colour:</span>
-          <ul class="ColorSwatchList HorizontalList HorizontalList--spacingTight">
-            {% assign prd_url = product.url | split:'/' | last %}
-            {% for i in (1..100) %}
-              {% for tag in product.tags %}
-                {% if tag contains 'product_' %}
-                  {% assign number = tag | split:'_' | first | plus:0 %}
-                  {% if number == i %}
-                    {% assign p-tag = tag | split:'_' | last %}
-                    {% assign color_name = p-tag | replace: '-', ' ' | capitalize %}
-                    {% assign color_swatch_name = p-tag | append: '.png' | prepend:'tag_' %}
+{% assign product_tags = product.tags | join:',' %}
+{% if product_tags contains 'product_' %}
+  <div class="ProductCustom__ColorSwatches">
+    <span class="ProductForm__Label">Colour:</span>
+    <ul class="ColorSwatchList HorizontalList HorizontalList--spacingTight">
+      {% assign prd_url = product.url | split:'/' | last %}
+      {% for i in (1..100) %}
+        {% for tag in product.tags %}
+          {% if tag contains 'product_' %}
+            {% assign number = tag | split:'_' | first | plus:0 %}
+            {% if number == i %}
+              {% assign p-tag = tag | split:'_' | last %}
+              {% assign color_name = p-tag | replace: '-', ' ' | capitalize %}
+              {% assign color_swatch_name = 'tag_' | append: p-tag | append: '.png' %}
 
-                    <li class="HorizontalList__Item {% if prd_url == p-tag %}current{% endif %}">
-                      <a href="/products/{{ p-tag }}" class="ColorSwatchLink" title="{{ color_name }}">
-                        <span class="ColorSwatch"
-                              style="background-image: url({{ color_swatch_name | asset_url }});">
-                        </span>
-                        <span class="ColorSwatch__Tooltip">{{ color_name }}</span>
-                      </a>
-                    </li>
-                  {% endif %}
-                {% endif %}
-              {% endfor %}
-            {% endfor %}
-          </ul>
-        </div>
-      {% endif %}
+              <li class="HorizontalList__Item {% if prd_url == p-tag %}current{% endif %}">
+                <a href="/products/{{ p-tag }}" class="ColorSwatchLink" title="{{ color_name }}">
+                  <span class="ColorSwatch"
+                        style="background-image: url('{{ color_swatch_name | asset_url }}');">
+                  </span>
+                  <span class="ColorSwatch__Tooltip">{{ color_name }}</span>
+                </a>
+              </li>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
 
       <!-- Variant Selector -->
       {% if product.variants.size > 1 %}
