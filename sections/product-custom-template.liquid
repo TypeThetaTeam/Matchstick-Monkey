@@ -47,7 +47,7 @@ based entirely on tag images (tag_product-handle.png).
               <li class="HorizontalList__Item {% if prd_url == p-tag %}current{% endif %}">
                 <a href="/products/{{ p-tag }}" class="ColorSwatchLink" title="{{ color_name }}">
                   <span class="ColorSwatch"
-                        style="background-image: url('{{ color_swatch_name | asset_url }}');">
+                        style="background-image: url({{ color_swatch_name | asset_url }});">
                   </span>
                   <span class="ColorSwatch__Tooltip">{{ color_name }}</span>
                 </a>
