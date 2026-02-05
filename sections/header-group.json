@@ -1,1 +1,69 @@
-{"name":"t:sections.header.name","type":"header","sections":{"header":{"type":"header","blocks":{"mega_menu_images_nzycmd":{"type":"mega_menu_images","settings":{"menu_item":"Toothbrushes","menu_heading":"","image_1":"shopify:\/\/shop_images\/02_MM_Dusty_Pink__Mini_PS_02.jpg","heading_1":"New In","subheading_1":"Explore","link_1":"","image_2":"shopify:\/\/shop_images\/01_MM_Mint_Green_Mini_PS_01.jpg","heading_2":"New In","subheading_2":"Explore","link_2":""}},"mega_menu_images_DxMLRt":{"type":"mega_menu_images","settings":{"menu_item":"'Teethers'","menu_heading":"","image_1":"shopify:\/\/shop_images\/05_MM_Mint_Green_Mini_LS_01.jpg","heading_1":"New In","subheading_1":"Explore","link_1":"","image_2":"shopify:\/\/shop_images\/website_Banner_promo_2025_MOBILE_800_x_800_px.png","heading_2":"New In","subheading_2":"Explore","link_2":""}}},"block_order":["mega_menu_images_nzycmd","mega_menu_images_DxMLRt"],"settings":{"logo_position":"middle-left","mobile_logo_position":"center","menu":"updated-menu","menu_type_desktop":"custom_mega","sticky_header_type":"on-scroll-up","show_line_separator":true,"color_scheme":"scheme-2","menu_color_scheme":"scheme-2","enable_country_selector":true,"enable_language_selector":true,"enable_customer_avatar":true,"margin_bottom":0,"padding_top":12,"padding_bottom":12}}},"order":["header"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "t:sections.header.name",
+  "type": "header",
+  "sections": {
+    "header": {
+      "type": "header",
+      "blocks": {
+        "mega_menu_images_nzycmd": {
+          "type": "mega_menu_images",
+          "settings": {
+            "menu_item": "Toothbrushes",
+            "menu_heading": "",
+            "heading_1": "New In",
+            "subheading_1": "Explore",
+            "link_1": "",
+            "heading_2": "New In",
+            "subheading_2": "Explore",
+            "link_2": ""
+          }
+        },
+        "mega_menu_images_DxMLRt": {
+          "type": "mega_menu_images",
+          "settings": {
+            "menu_item": "'Teethers'",
+            "menu_heading": "",
+            "heading_1": "New In",
+            "subheading_1": "Explore",
+            "link_1": "",
+            "heading_2": "New In",
+            "subheading_2": "Explore",
+            "link_2": ""
+          }
+        }
+      },
+      "block_order": [
+        "mega_menu_images_nzycmd",
+        "mega_menu_images_DxMLRt"
+      ],
+      "settings": {
+        "logo_position": "middle-left",
+        "mobile_logo_position": "center",
+        "menu": "main-menu",
+        "menu_type_desktop": "custom_mega",
+        "sticky_header_type": "on-scroll-up",
+        "show_line_separator": true,
+        "color_scheme": "scheme-2",
+        "menu_color_scheme": "scheme-2",
+        "enable_country_selector": true,
+        "enable_language_selector": true,
+        "enable_customer_avatar": true,
+        "margin_bottom": 0,
+        "padding_top": 12,
+        "padding_bottom": 12
+      }
+    }
+  },
+  "order": [
+    "header"
+  ]
+}
