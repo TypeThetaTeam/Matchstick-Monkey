@@ -1,0 +1,1468 @@
+{% comment %}
+  Section: main-gift-card-product.liquid
+  Complete Gift Card Product Section - All Styles Included
+  Place in: sections/main-gift-card-product.liquid
+{% endcomment %}
+
+{%- assign product_form_id = 'product-form-' | append: section.id -%}
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+{%- assign featured_image = current_variant.featured_image | default: product.featured_image -%}
+
+<style>
+/* ===========================
+   GIFT CARD PRODUCT STYLES
+   =========================== */
+
+.gift-card-product-section {
+  padding-top: {{ section.settings.padding_top }}px;
+  padding-bottom: {{ section.settings.padding_bottom }}px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+/* GRID LAYOUT */
+.gift-card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: start;
+}
+
+/* MEDIA GALLERY */
+.gift-card-media {
+  position: {% if section.settings.enable_sticky_info %}sticky{% else %}relative{% endif %};
+  top: 10rem;
+}
+
+.main-image-container {
+  background: #f8f8f8;
+  border-radius: 1.2rem;
+  overflow: hidden;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.main-gift-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 4rem;
+}
+
+.thumbnail-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+  gap: 1rem;
+}
+
+.thumbnail-btn {
+  border: 2px solid transparent;
+  background: #f8f8f8;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  padding: 0;
+  overflow: hidden;
+  aspect-ratio: 1;
+  transition: all 0.3s ease;
+}
+
+.thumbnail-btn:hover,
+.thumbnail-btn.active {
+  border-color: #3b5998;
+  transform: scale(1.05);
+}
+
+.thumbnail-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* PRODUCT INFO */
+.gift-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.product-title {
+  font-size: 3.6rem;
+  font-weight: 700;
+  margin: 0;
+  color: #1a1a1a;
+  line-height: 1.2;
+}
+
+.product-vendor {
+  font-size: 1.4rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 1rem;
+}
+
+.product-price {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #3b5998;
+}
+
+.product-description {
+  font-size: 1.6rem;
+  line-height: 1.6;
+  color: #666;
+}
+
+/* VARIANT PICKER */
+.gift-card-variants {
+  padding: 2rem 0;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.variant-label {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #1a1a1a;
+}
+
+.selected-value {
+  font-size: 1.8rem;
+  color: #3b5998;
+  font-weight: 700;
+  margin-left: 0.5rem;
+}
+
+.variant-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.variant-radio {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.variant-btn {
+  padding: 1.2rem 2.4rem;
+  border: 2px solid #e0e0e0;
+  background: #fff;
+  border-radius: 0.8rem;
+  font-size: 1.6rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #333;
+  display: inline-block;
+}
+
+.variant-btn:hover:not(.disabled) {
+  border-color: #3b5998;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.variant-radio:checked + .variant-btn {
+  background: #3b5998;
+  border-color: #3b5998;
+  color: #fff;
+}
+
+.variant-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+/* RECIPIENT INFO */
+.recipient-info-block {
+  background: #f9f9f9;
+  padding: 2.5rem;
+  border-radius: 1.2rem;
+}
+
+.recipient-heading {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  color: #1a1a1a;
+}
+
+.recipient-description {
+  color: #666;
+  margin-bottom: 2rem;
+  font-size: 1.4rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.field {
+  margin-bottom: 1.5rem;
+}
+
+.field-label {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  color: #1a1a1a;
+}
+
+.optional-label {
+  font-weight: 400;
+  color: #999;
+  font-size: 1.2rem;
+}
+
+.field-input,
+.field-textarea,
+.field-select {
+  width: 100%;
+  padding: 1.2rem 1.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.8rem;
+  font-size: 1.4rem;
+  font-family: inherit;
+  background: #fff;
+  transition: border-color 0.3s ease;
+}
+
+.field-input:focus,
+.field-textarea:focus,
+.field-select:focus {
+  outline: none;
+  border-color: #3b5998;
+  box-shadow: 0 0 0 3px rgba(59, 89, 152, 0.1);
+}
+
+.field-textarea {
+  resize: vertical;
+  min-height: 10rem;
+}
+
+.char-counter {
+  display: block;
+  text-align: right;
+  font-size: 1.2rem;
+  color: #999;
+  margin-top: 0.5rem;
+}
+
+/* QUANTITY SELECTOR */
+.quantity-block {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.5rem;
+}
+
+.quantity-wrapper {
+  flex: 0 0 12rem;
+}
+
+.quantity-label {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  color: #1a1a1a;
+}
+
+.quantity-controls {
+  display: flex;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.8rem;
+  overflow: hidden;
+  background: #fff;
+}
+
+.qty-btn {
+  width: 3.6rem;
+  height: 4.8rem;
+  border: none;
+  background: #f8f8f8;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+  font-size: 2rem;
+  color: #333;
+}
+
+.qty-btn:hover {
+  background: #e8e8e8;
+}
+
+.qty-input {
+  width: 4.8rem;
+  border: none;
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 600;
+  background: #fff;
+}
+
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* BUY BUTTONS */
+.buy-buttons-wrapper {
+  flex: 1;
+}
+
+.add-to-cart-btn {
+  width: 100%;
+  padding: 1.6rem 3.2rem;
+  background: #3b5998;
+  color: #fff;
+  border: none;
+  border-radius: 0.8rem;
+  font-size: 1.6rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: 5.2rem;
+}
+
+.add-to-cart-btn:hover:not(:disabled) {
+  background: #2d4373;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 89, 152, 0.3);
+}
+
+.add-to-cart-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.add-to-cart-btn.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.btn-loader {
+  display: none;
+}
+
+.add-to-cart-btn.loading .btn-text {
+  display: none;
+}
+
+.add-to-cart-btn.loading .btn-loader {
+  display: block;
+}
+
+.spinner {
+  animation: rotate 2s linear infinite;
+  width: 2rem;
+  height: 2rem;
+}
+
+.spinner circle {
+  stroke: #fff;
+  stroke-linecap: round;
+  animation: dash 1.5s ease-in-out infinite;
+  fill: none;
+  stroke-width: 6;
+}
+
+@keyframes rotate {
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
+  }
+}
+
+.dynamic-checkout {
+  margin-top: 1rem;
+}
+
+/* BALANCE CHECKER */
+.balance-checker-block {
+  background: #f9f9f9;
+  padding: 2.5rem;
+  border-radius: 1.2rem;
+}
+
+.balance-heading {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  color: #1a1a1a;
+}
+
+.balance-description {
+  color: #666;
+  margin-bottom: 1.5rem;
+  font-size: 1.4rem;
+}
+
+.balance-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.balance-input {
+  padding: 1.2rem 1.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.8rem;
+  font-size: 1.4rem;
+  background: #fff;
+}
+
+.check-balance-btn {
+  padding: 1.2rem 2.4rem;
+  background: #3b5998;
+  color: #fff;
+  border: none;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  min-width: 16rem;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+
+.check-balance-btn:hover {
+  background: #2d4373;
+}
+
+.check-balance-btn.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.balance-result {
+  padding: 1.5rem;
+  border-radius: 0.8rem;
+  font-size: 1.4rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.balance-result.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.balance-result.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.balance-result.hidden {
+  display: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* COLLAPSIBLE TAB */
+.collapsible-tab {
+  border-top: 1px solid #e0e0e0;
+  padding: 2rem 0;
+}
+
+.collapsible-summary {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  list-style: none;
+  font-size: 1.6rem;
+  font-weight: 600;
+  padding: 1rem 0;
+}
+
+.collapsible-summary::-webkit-details-marker {
+  display: none;
+}
+
+.collapsible-icon {
+  width: 2.4rem;
+  height: 2.4rem;
+  flex-shrink: 0;
+}
+
+.collapsible-content {
+  padding: 1.5rem 0 0 3.4rem;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* MESSAGES */
+.success-message,
+.error-message {
+  padding: 1.2rem 1.6rem;
+  border-radius: 0.8rem;
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.4rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.success-message {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.error-message {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* RESPONSIVE */
+@media screen and (max-width: 990px) {
+  .gift-card-grid {
+    gap: 4rem;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .gift-card-product-section {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .gift-card-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .gift-card-media {
+    position: relative;
+    top: 0;
+  }
+
+  .product-title {
+    font-size: 2.8rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .quantity-block {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .quantity-wrapper {
+    flex: 1;
+  }
+
+  .balance-form {
+    grid-template-columns: 1fr;
+  }
+
+  .check-balance-btn {
+    width: 100%;
+  }
+
+  .variant-options {
+    gap: 0.8rem;
+  }
+
+  .variant-btn {
+    padding: 1rem 2rem;
+    font-size: 1.4rem;
+  }
+
+  .recipient-info-block,
+  .balance-checker-block {
+    padding: 2rem;
+  }
+}
+</style>
+
+<section class="gift-card-product-section">
+  <div class="gift-card-grid">
+    
+    {%- comment -%} MEDIA GALLERY {%- endcomment -%}
+    <div class="gift-card-media">
+      <div class="main-image-container">
+        <img 
+          id="main-gift-card-image-{{ section.id }}"
+          src="{{ featured_image | img_url: '800x800' }}" 
+          alt="{{ product.title | escape }}"
+          class="main-gift-card-image"
+          loading="eager"
+        >
+      </div>
+      
+      {% if product.images.size > 1 %}
+      <div class="thumbnail-gallery">
+        {% for image in product.images %}
+          <button 
+            type="button"
+            class="thumbnail-btn {% if image == featured_image %}active{% endif %}"
+            data-image-url="{{ image | img_url: '800x800' }}"
+            aria-label="View image {{ forloop.index }}"
+          >
+            <img src="{{ image | img_url: '100x100' }}" alt="{{ image.alt | escape }}" loading="lazy">
+          </button>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    {%- comment -%} PRODUCT INFO {%- endcomment -%}
+    <div class="gift-card-info">
+      
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          
+          {%- when '@app' -%}
+            <div {{ block.shopify_attributes }}>
+              {% render block %}
+            </div>
+
+          {%- when 'title' -%}
+            <div {{ block.shopify_attributes }}>
+              <h1 class="product-title">{{ product.title }}</h1>
+              {% if product.vendor != blank %}
+                <p class="product-vendor">{{ product.vendor }}</p>
+              {% endif %}
+            </div>
+
+          {%- when 'price' -%}
+            <div {{ block.shopify_attributes }}>
+              <p class="product-price" id="price-{{ section.id }}">
+                {{ current_variant.price | money }}
+              </p>
+            </div>
+
+          {%- when 'description' -%}
+            {% if product.description != blank %}
+              <div class="product-description" {{ block.shopify_attributes }}>
+                {{ product.description }}
+              </div>
+            {% endif %}
+
+          {%- when 'variant_picker' -%}
+            <div class="gift-card-variants" {{ block.shopify_attributes }}>
+              {% unless product.has_only_default_variant %}
+                <label class="variant-label">
+                  Gift Card Amount: 
+                  <span class="selected-value" id="selected-value-{{ section.id }}">
+                    {{ current_variant.title }}
+                  </span>
+                </label>
+                
+                <div class="variant-options">
+                  {% for variant in product.variants %}
+                    <input 
+                      type="radio" 
+                      name="id" 
+                      value="{{ variant.id }}" 
+                      id="variant-{{ section.id }}-{{ variant.id }}"
+                      class="variant-radio"
+                      {% if variant == current_variant %}checked{% endif %}
+                      {% unless variant.available %}disabled{% endunless %}
+                      data-variant-price="{{ variant.price | money }}"
+                      data-variant-title="{{ variant.title }}"
+                      {% if variant.featured_image %}data-variant-image="{{ variant.featured_image | img_url: '800x800' }}"{% endif %}
+                      form="{{ product_form_id }}"
+                    >
+                    <label 
+                      for="variant-{{ section.id }}-{{ variant.id }}" 
+                      class="variant-btn {% unless variant.available %}disabled{% endunless %}"
+                    >
+                      {{ variant.title }}
+                    </label>
+                  {% endfor %}
+                </div>
+              {% endunless %}
+            </div>
+
+          {%- when 'recipient_info' -%}
+            <div class="recipient-info-block" {{ block.shopify_attributes }}>
+              <h3 class="recipient-heading">{{ block.settings.heading }}</h3>
+              <p class="recipient-description">{{ block.settings.description }}</p>
+              
+              <div class="form-row">
+                <div class="field">
+                  <label class="field-label" for="recipient-name-{{ section.id }}">
+                    {{ block.settings.recipient_name_label }}
+                  </label>
+                  <input
+                    type="text"
+                    id="recipient-name-{{ section.id }}"
+                    name="properties[{{ block.settings.recipient_name_label }}]"
+                    class="field-input"
+                    placeholder="{{ block.settings.recipient_name_placeholder }}"
+                    form="{{ product_form_id }}"
+                  >
+                </div>
+
+                <div class="field">
+                  <label class="field-label" for="recipient-email-{{ section.id }}">
+                    {{ block.settings.recipient_email_label }}
+                  </label>
+                  <input
+                    type="email"
+                    id="recipient-email-{{ section.id }}"
+                    name="properties[{{ block.settings.recipient_email_label }}]"
+                    class="field-input"
+                    placeholder="{{ block.settings.recipient_email_placeholder }}"
+                    form="{{ product_form_id }}"
+                  >
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="field-label" for="sender-name-{{ section.id }}">
+                  {{ block.settings.sender_name_label }}
+                </label>
+                <input
+                  type="text"
+                  id="sender-name-{{ section.id }}"
+                  name="properties[{{ block.settings.sender_name_label }}]"
+                  class="field-input"
+                  placeholder="{{ block.settings.sender_name_placeholder }}"
+                  form="{{ product_form_id }}"
+                >
+              </div>
+
+              {% if block.settings.show_message_field %}
+                <div class="field">
+                  <label class="field-label" for="gift-message-{{ section.id }}">
+                    {{ block.settings.message_label }}
+                    <span class="optional-label">(Optional)</span>
+                  </label>
+                  <textarea
+                    id="gift-message-{{ section.id }}"
+                    name="properties[{{ block.settings.message_label }}]"
+                    class="field-textarea"
+                    rows="4"
+                    maxlength="{{ block.settings.message_max_length }}"
+                    placeholder="{{ block.settings.message_placeholder }}"
+                    form="{{ product_form_id }}"
+                  ></textarea>
+                  <span class="char-counter">
+                    <span class="char-count">0</span>/{{ block.settings.message_max_length }}
+                  </span>
+                </div>
+              {% endif %}
+
+              {% if block.settings.show_delivery_date %}
+                <div class="form-row">
+                  <div class="field">
+                    <label class="field-label" for="delivery-date-{{ section.id }}">
+                      {{ block.settings.delivery_date_label }}
+                    </label>
+                    <input
+                      type="date"
+                      id="delivery-date-{{ section.id }}"
+                      name="properties[{{ block.settings.delivery_date_label }}]"
+                      class="field-input"
+                      min="{{ 'now' | date: '%Y-%m-%d' }}"
+                      form="{{ product_form_id }}"
+                    >
+                  </div>
+
+                  {% if block.settings.show_delivery_time %}
+                    <div class="field">
+                      <label class="field-label" for="delivery-time-{{ section.id }}">
+                        {{ block.settings.delivery_time_label }}
+                      </label>
+                      <select
+                        id="delivery-time-{{ section.id }}"
+                        name="properties[{{ block.settings.delivery_time_label }}]"
+                        class="field-select"
+                        form="{{ product_form_id }}"
+                      >
+                        <option value="">Select time</option>
+                        <option value="Morning (8AM - 12PM)">Morning (8AM - 12PM)</option>
+                        <option value="Afternoon (12PM - 5PM)">Afternoon (12PM - 5PM)</option>
+                        <option value="Evening (5PM - 9PM)">Evening (5PM - 9PM)</option>
+                      </select>
+                    </div>
+                  {% endif %}
+                </div>
+              {% endif %}
+            </div>
+
+          {%- when 'quantity_selector' -%}
+            <div class="quantity-block" {{ block.shopify_attributes }}>
+              <div class="quantity-wrapper">
+                <label class="quantity-label" for="quantity-{{ section.id }}">
+                  Quantity
+                </label>
+                <div class="quantity-controls">
+                  <button class="qty-btn qty-minus" type="button" aria-label="Decrease quantity">
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    id="quantity-{{ section.id }}"
+                    name="quantity"
+                    value="1"
+                    min="1"
+                    max="10"
+                    class="qty-input"
+                    form="{{ product_form_id }}"
+                  >
+                  <button class="qty-btn qty-plus" type="button" aria-label="Increase quantity">
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          {%- when 'buy_buttons' -%}
+            <div class="buy-buttons-wrapper" {{ block.shopify_attributes }}>
+              {%- form 'product', product, id: product_form_id, novalidate: 'novalidate' -%}
+                <input
+                  type="hidden"
+                  name="id"
+                  value="{{ current_variant.id }}"
+                >
+
+                <button
+                  type="submit"
+                  name="add"
+                  class="add-to-cart-btn"
+                  {% unless current_variant.available %}disabled{% endunless %}
+                >
+                  <span class="btn-text">
+                    {% if current_variant.available %}
+                      {{ block.settings.add_to_cart_button_label }}
+                    {% else %}
+                      Sold Out
+                    {% endif %}
+                  </span>
+                  <span class="btn-loader">
+                    <svg class="spinner" viewBox="0 0 66 66">
+                      <circle cx="33" cy="33" r="30"></circle>
+                    </svg>
+                  </span>
+                </button>
+
+                {% if block.settings.show_dynamic_checkout %}
+                  <div class="dynamic-checkout">
+                    {{ form | payment_button }}
+                  </div>
+                {% endif %}
+              {%- endform -%}
+              
+              <div class="success-message" style="display: none;">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="2"/>
+                  <path d="M6 10L9 13L14 7" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span>Added to cart!</span>
+              </div>
+              <div class="error-message" style="display: none;"></div>
+            </div>
+
+          {%- when 'balance_checker' -%}
+            {% if section.settings.enable_balance_checker %}
+              <div class="balance-checker-block" {{ block.shopify_attributes }}>
+                <h3 class="balance-heading">{{ block.settings.heading }}</h3>
+                <p class="balance-description">{{ block.settings.description }}</p>
+                
+                <div class="balance-form">
+                  <input
+                    type="text"
+                    id="gift-card-code-{{ section.id }}"
+                    class="balance-input"
+                    placeholder="{{ block.settings.input_placeholder }}"
+                  >
+                  <button
+                    type="button"
+                    class="check-balance-btn"
+                    data-section-id="{{ section.id }}"
+                  >
+                    <span class="btn-text">{{ block.settings.button_label }}</span>
+                    <span class="btn-loader">
+                      <svg class="spinner" viewBox="0 0 66 66">
+                        <circle cx="33" cy="33" r="30"></circle>
+                      </svg>
+                    </span>
+                  </button>
+                </div>
+                
+                <div id="balance-result-{{ section.id }}" class="balance-result hidden"></div>
+              </div>
+            {% endif %}
+
+          {%- when 'collapsible_tab' -%}
+            <details class="collapsible-tab" {{ block.shopify_attributes }}>
+              <summary class="collapsible-summary">
+                <svg class="collapsible-icon" viewBox="0 0 24 24" fill="none">
+                  <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span>{{ block.settings.heading }}</span>
+              </summary>
+              <div class="collapsible-content">
+                {{ block.settings.content }}
+                {{ block.settings.page.content }}
+              </div>
+            </details>
+
+          {%- when 'custom_liquid' -%}
+            <div {{ block.shopify_attributes }}>
+              {{ block.settings.custom_liquid }}
+            </div>
+
+        {%- endcase -%}
+      {%- endfor -%}
+
+    </div>
+  </div>
+</section>
+
+<script>
+(function() {
+  'use strict';
+
+  const section = document.querySelector('.gift-card-product-section');
+  if (!section) return;
+
+  const sectionId = '{{ section.id }}';
+  const productForm = document.getElementById('product-form-' + sectionId);
+  const variantInputs = document.querySelectorAll('.variant-radio');
+  const selectedValue = document.getElementById('selected-value-' + sectionId);
+  const priceDisplay = document.getElementById('price-' + sectionId);
+  const mainImage = document.getElementById('main-gift-card-image-' + sectionId);
+  const thumbnails = document.querySelectorAll('.thumbnail-btn');
+  const qtyInput = document.getElementById('quantity-' + sectionId);
+  const qtyMinus = document.querySelector('.qty-minus');
+  const qtyPlus = document.querySelector('.qty-plus');
+  const messageField = document.getElementById('gift-message-' + sectionId);
+  const checkBalanceBtn = document.querySelector('.check-balance-btn[data-section-id="' + sectionId + '"]');
+
+  // Variant selection
+  variantInputs.forEach(input => {
+    input.addEventListener('change', function() {
+      if (this.checked) {
+        const price = this.getAttribute('data-variant-price');
+        const title = this.getAttribute('data-variant-title');
+        const imageUrl = this.getAttribute('data-variant-image');
+        
+        if (selectedValue) selectedValue.textContent = title;
+        if (priceDisplay) priceDisplay.textContent = price;
+        if (imageUrl && mainImage) mainImage.src = imageUrl;
+      }
+    });
+  });
+
+  // Thumbnail gallery
+  thumbnails.forEach(thumb => {
+    thumb.addEventListener('click', function() {
+      thumbnails.forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      
+      const imageUrl = this.getAttribute('data-image-url');
+      if (mainImage) mainImage.src = imageUrl;
+    });
+  });
+
+  // Quantity controls
+  if (qtyMinus && qtyPlus && qtyInput) {
+    qtyMinus.addEventListener('click', function() {
+      const value = parseInt(qtyInput.value);
+      if (value > 1) qtyInput.value = value - 1;
+    });
+
+    qtyPlus.addEventListener('click', function() {
+      const value = parseInt(qtyInput.value);
+      if (value < 10) qtyInput.value = value + 1;
+    });
+  }
+
+  // Character counter
+  if (messageField) {
+    const counter = messageField.parentElement.querySelector('.char-count');
+    if (counter) {
+      messageField.addEventListener('input', function() {
+        counter.textContent = this.value.length;
+      });
+    }
+  }
+
+  // Form submission
+  if (productForm) {
+    productForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const submitBtn = this.querySelector('.add-to-cart-btn');
+      const successMsg = document.querySelector('.success-message');
+      const errorMsg = document.querySelector('.error-message');
+      
+      submitBtn.classList.add('loading');
+      successMsg.style.display = 'none';
+      errorMsg.style.display = 'none';
+
+      const formData = new FormData(this);
+      
+      fetch('/cart/add.js', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        submitBtn.classList.remove('loading');
+        
+        if (data.id) {
+          successMsg.style.display = 'flex';
+          setTimeout(() => window.location.href = '/cart', 1500);
+        } else {
+          throw new Error('Failed to add');
+        }
+      })
+      .catch(error => {
+        submitBtn.classList.remove('loading');
+        errorMsg.textContent = 'Error adding to cart. Please try again.';
+        errorMsg.style.display = 'flex';
+      });
+    });
+  }
+
+  // Balance checker
+  if (checkBalanceBtn) {
+    checkBalanceBtn.addEventListener('click', function() {
+      const codeInput = document.getElementById('gift-card-code-' + sectionId);
+      const resultDiv = document.getElementById('balance-result-' + sectionId);
+      const code = codeInput.value.trim();
+      
+      if (!code) {
+        showResult(resultDiv, 'Please enter a gift card code', 'error');
+        return;
+      }
+
+      this.classList.add('loading');
+      resultDiv.classList.add('hidden');
+
+      fetch('/services/gift_cards/' + encodeURIComponent(code) + '/balance')
+        .then(response => {
+          if (!response.ok) throw new Error('Not found');
+          return response.json();
+        })
+        .then(data => {
+          this.classList.remove('loading');
+          
+          if (data && data.balance !== undefined) {
+            const balance = (data.balance / 100).toFixed(2);
+            const initial = (data.initial_value / 100).toFixed(2);
+            const currency = data.currency || 'USD';
+            
+            let msg = '<strong>Current Balance:</strong> ' + currency + ' $' + balance;
+            if (data.initial_value) {
+              msg += '<br><small>Initial Value: ' + currency + ' $' + initial + '</small>';
+            }
+            
+            showResult(resultDiv, msg, 'success');
+          } else {
+            showResult(resultDiv, 'Unable to retrieve balance', 'error');
+          }
+        })
+        .catch(error => {
+          this.classList.remove('loading');
+          showResult(resultDiv, 'Invalid gift card code', 'error');
+        });
+    });
+  }
+
+  function showResult(element, message, type) {
+    element.innerHTML = message;
+    element.className = 'balance-result ' + type;
+    element.classList.remove('hidden');
+    
+    setTimeout(() => element.classList.add('hidden'), 8000);
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Gift Card Product",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "media_position",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left",
+      "label": "Media position"
+    },
+    {
+      "type": "select",
+      "id": "gallery_layout",
+      "options": [
+        {
+          "value": "stacked",
+          "label": "Stacked"
+        },
+        {
+          "value": "thumbnail",
+          "label": "Thumbnail"
+        },
+        {
+          "value": "thumbnail_slider",
+          "label": "Thumbnail slider"
+        }
+      ],
+      "default": "thumbnail_slider",
+      "label": "Gallery layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sticky_info",
+      "default": true,
+      "label": "Enable sticky product info"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_video_looping",
+      "default": false,
+      "label": "Enable video looping"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_balance_checker",
+      "default": true,
+      "label": "Enable balance checker"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "title",
+      "name": "Title",
+      "limit": 1
+    },
+    {
+      "type": "price",
+      "name": "Price",
+      "limit": 1
+    },
+    {
+      "type": "vendor",
+      "name": "Vendor",
+      "limit": 1
+    },
+    {
+      "type": "description",
+      "name": "Description",
+      "limit": 1
+    },
+    {
+      "type": "variant_picker",
+      "name": "Variant picker",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "picker_type",
+          "options": [
+            {
+              "value": "dropdown",
+              "label": "Dropdown"
+            },
+            {
+              "value": "buttons",
+              "label": "Buttons"
+            }
+          ],
+          "default": "buttons",
+          "label": "Type"
+        },
+        {
+          "type": "checkbox",
+          "id": "update_url",
+          "default": true,
+          "label": "Update URL when variant changes"
+        }
+      ]
+    },
+    {
+      "type": "quantity_selector",
+      "name": "Quantity selector",
+      "limit": 1
+    },
+    {
+      "type": "recipient_info",
+      "name": "Recipient Information",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "default": "Recipient Information",
+          "label": "Heading"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "default": "Add recipient details to personalize your gift card",
+          "label": "Description"
+        },
+        {
+          "type": "text",
+          "id": "recipient_name_label",
+          "default": "Recipient Name",
+          "label": "Recipient name label"
+        },
+        {
+          "type": "text",
+          "id": "recipient_name_placeholder",
+          "default": "Enter recipient's name",
+          "label": "Recipient name placeholder"
+        },
+        {
+          "type": "text",
+          "id": "recipient_email_label",
+          "default": "Recipient Email",
+          "label": "Recipient email label"
+        },
+        {
+          "type": "text",
+          "id": "recipient_email_placeholder",
+          "default": "recipient@example.com",
+          "label": "Recipient email placeholder"
+        },
+        {
+          "type": "text",
+          "id": "sender_name_label",
+          "default": "Your Name",
+          "label": "Sender name label"
+        },
+        {
+          "type": "text",
+          "id": "sender_name_placeholder",
+          "default": "Enter your name",
+          "label": "Sender name placeholder"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_message_field",
+          "default": true,
+          "label": "Show message field"
+        },
+        {
+          "type": "text",
+          "id": "message_label",
+          "default": "Personal Message",
+          "label": "Message label"
+        },
+        {
+          "type": "text",
+          "id": "message_placeholder",
+          "default": "Add a heartfelt message...",
+          "label": "Message placeholder"
+        },
+        {
+          "type": "range",
+          "id": "message_max_length",
+          "min": 100,
+          "max": 1000,
+          "step": 50,
+          "default": 500,
+          "label": "Message max length"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_delivery_date",
+          "default": true,
+          "label": "Show delivery date"
+        },
+        {
+          "type": "text",
+          "id": "delivery_date_label",
+          "default": "Delivery Date",
+          "label": "Delivery date label"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_delivery_time",
+          "default": true,
+          "label": "Show delivery time"
+        },
+        {
+          "type": "text",
+          "id": "delivery_time_label",
+          "default": "Preferred Time",
+          "label": "Delivery time label"
+        }
+      ]
+    },
+    {
+      "type": "buy_buttons",
+      "name": "Buy buttons",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "add_to_cart_button_label",
+          "default": "Add to cart",
+          "label": "Add to cart button label"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_dynamic_checkout",
+          "default": true,
+          "label": "Show dynamic checkout buttons"
+        }
+      ]
+    },
+    {
+      "type": "balance_checker",
+      "name": "Balance Checker",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "default": "Check Your Gift Card Balance",
+          "label": "Heading"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "default": "Enter your gift card code to check the remaining balance",
+          "label": "Description"
+        },
+        {
+          "type": "text",
+          "id": "input_placeholder",
+          "default": "Enter gift card code",
+          "label": "Input placeholder"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "default": "Check Balance",
+          "label": "Button label"
+        }
+      ]
+    },
+    {
+      "type": "collapsible_tab",
+      "name": "Collapsible tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "default": "Collapsible tab",
+          "label": "Heading"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content"
+        },
+        {
+          "type": "page",
+          "id": "page",
+          "label": "Content from page"
+        }
+      ]
+    },
+    {
+      "type": "custom_liquid",
+      "name": "Custom Liquid",
+      "settings": [
+        {
+          "type": "liquid",
+          "id": "custom_liquid",
+          "label": "Custom Liquid"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

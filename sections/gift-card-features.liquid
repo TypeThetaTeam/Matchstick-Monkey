@@ -1,0 +1,472 @@
+{% comment %}
+  Section: gift-card-features.liquid
+  Complete Gift Card Features Section - All Styles Included
+  Place in: sections/gift-card-features.liquid
+{% endcomment %}
+
+<style>
+/* ===========================
+   GIFT CARD FEATURES STYLES
+   =========================== */
+
+.gift-card-features-section {
+  padding-top: {{ section.settings.padding_top }}px;
+  padding-bottom: {{ section.settings.padding_bottom }}px;
+  background-color: {{ section.settings.background_color }};
+}
+
+.features-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.features-heading {
+  text-align: center;
+  margin: 0 0 4rem 0;
+  color: #1a1a1a;
+}
+
+.features-heading.h0 {
+  font-size: 4.8rem;
+}
+
+.features-heading.h1 {
+  font-size: 3.6rem;
+}
+
+.features-heading.h2 {
+  font-size: 2.8rem;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr);
+  gap: 3rem;
+}
+
+.feature-item {
+  background: rgba(0, 0, 0, 0.02);
+  padding: 3rem;
+  border-radius: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: {{ section.settings.text_alignment }};
+  text-align: {{ section.settings.text_alignment }};
+  transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+  background: rgba(0, 0, 0, 0.04);
+  transform: translateY(-0.5rem);
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.1);
+}
+
+.feature-icon {
+  margin-bottom: 2rem;
+  color: #3b5998;
+}
+
+.feature-icon svg {
+  width: {{ section.settings.icon_size }}px;
+  height: {{ section.settings.icon_size }}px;
+}
+
+.feature-image {
+  margin-bottom: 2rem;
+  border-radius: 0.8rem;
+  overflow: hidden;
+}
+
+.feature-image img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.feature-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  color: #1a1a1a;
+}
+
+.feature-description {
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
+}
+
+.feature-description p {
+  margin: 0;
+}
+
+.feature-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #3b5998;
+  text-decoration: none;
+  font-weight: 600;
+  transition: gap 0.3s ease;
+}
+
+.feature-link:hover {
+  gap: 1rem;
+}
+
+/* RESPONSIVE */
+@media screen and (max-width: 990px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.5rem;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .features-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .features-heading {
+    margin-bottom: 3rem;
+  }
+
+  .features-heading.h0 {
+    font-size: 3.2rem;
+  }
+
+  .features-heading.h1 {
+    font-size: 2.8rem;
+  }
+
+  .features-heading.h2 {
+    font-size: 2.4rem;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .feature-item {
+    padding: 2rem;
+  }
+
+  .feature-icon svg {
+    width: 4rem;
+    height: 4rem;
+  }
+}
+</style>
+
+<section class="gift-card-features-section">
+  <div class="features-container">
+    
+    {%- if section.settings.heading != blank -%}
+      <h2 class="features-heading {{ section.settings.heading_size }}">
+        {{ section.settings.heading }}
+      </h2>
+    {%- endif -%}
+
+    <div class="features-grid">
+      {%- for block in section.blocks -%}
+        <div class="feature-item" {{ block.shopify_attributes }}>
+          
+          {%- if block.settings.icon != 'none' -%}
+            <div class="feature-icon">
+              {% case block.settings.icon %}
+                {% when 'delivery' %}
+                  <svg viewBox="0 0 48 48" fill="none">
+                    <path d="M4 12H32V36H4V12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M32 20H38L44 26V36H32V20Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="12" cy="36" r="4" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="36" cy="36" r="4" stroke="currentColor" stroke-width="2"/>
+                    <path d="M12 8L18 4L24 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                {% when 'calendar' %}
+                  <svg viewBox="0 0 48 48" fill="none">
+                    <rect x="6" y="8" width="36" height="36" rx="2" stroke="currentColor" stroke-width="2"/>
+                    <path d="M6 18H42" stroke="currentColor" stroke-width="2"/>
+                    <path d="M14 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M34 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="15" cy="28" r="2" fill="currentColor"/>
+                    <circle cx="24" cy="28" r="2" fill="currentColor"/>
+                    <circle cx="33" cy="28" r="2" fill="currentColor"/>
+                  </svg>
+                {% when 'checkmark' %}
+                  <svg viewBox="0 0 48 48" fill="none">
+                    <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="2"/>
+                    <path d="M14 24L20 30L34 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                {% when 'gift' %}
+                  <svg viewBox="0 0 48 48" fill="none">
+                    <path d="M24 14V44" stroke="currentColor" stroke-width="2"/>
+                    <rect x="6" y="20" width="36" height="24" stroke="currentColor" stroke-width="2"/>
+                    <path d="M6 20H42V28H6V20Z" stroke="currentColor" stroke-width="2"/>
+                    <path d="M24 14C24 14 20 4 14 8C8 12 12 20 24 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M24 14C24 14 28 4 34 8C40 12 36 20 24 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                {% when 'email' %}
+                  <svg viewBox="0 0 48 48" fill="none">
+                    <rect x="4" y="10" width="40" height="28" rx="2" stroke="currentColor" stroke-width="2"/>
+                    <path d="M4 10L24 26L44 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                {% when 'shield' %}
+                  <svg viewBox="0 0 48 48" fill="none">
+                    <path d="M24 4L6 12V24C6 33 11 41 24 44C37 41 42 33 42 24V12L24 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M24 16V28" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="24" cy="34" r="2" fill="currentColor"/>
+                  </svg>
+                {% else %}
+                  <svg viewBox="0 0 48 48" fill="none">
+                    <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="2"/>
+                    <path d="M14 24L20 30L34 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+              {% endcase %}
+            </div>
+          {%- endif -%}
+
+          {%- if block.settings.image != blank -%}
+            <div class="feature-image">
+              {{
+                block.settings.image
+                | image_url: width: 400
+                | image_tag: loading: 'lazy', widths: '200, 300, 400'
+              }}
+            </div>
+          {%- endif -%}
+
+          {%- if block.settings.title != blank -%}
+            <h3 class="feature-title">{{ block.settings.title }}</h3>
+          {%- endif -%}
+
+          {%- if block.settings.description != blank -%}
+            <div class="feature-description">
+              {{ block.settings.description }}
+            </div>
+          {%- endif -%}
+
+          {%- if block.settings.link_label != blank and block.settings.link != blank -%}
+            <a href="{{ block.settings.link }}" class="feature-link">
+              {{ block.settings.link_label }}
+              <span aria-hidden="true">→</span>
+            </a>
+          {%- endif -%}
+
+        </div>
+      {%- endfor -%}
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Gift Card Features",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "Gift Card Benefits",
+      "label": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "h2",
+          "label": "Small"
+        },
+        {
+          "value": "h1",
+          "label": "Medium"
+        },
+        {
+          "value": "h0",
+          "label": "Large"
+        }
+      ],
+      "default": "h1",
+      "label": "Heading size"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3,
+      "label": "Number of columns on desktop"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center",
+      "label": "Text alignment"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 24,
+      "max": 80,
+      "step": 4,
+      "default": 48,
+      "unit": "px",
+      "label": "Icon size"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#f9f9f9"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "delivery",
+              "label": "Delivery"
+            },
+            {
+              "value": "calendar",
+              "label": "Calendar"
+            },
+            {
+              "value": "checkmark",
+              "label": "Checkmark"
+            },
+            {
+              "value": "gift",
+              "label": "Gift"
+            },
+            {
+              "value": "email",
+              "label": "Email"
+            },
+            {
+              "value": "shield",
+              "label": "Shield"
+            }
+          ],
+          "default": "checkmark",
+          "label": "Icon"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image (optional)"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "default": "Feature title",
+          "label": "Title"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "default": "<p>Describe your feature benefit here</p>",
+          "label": "Description"
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "Link label"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Gift Card Features",
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "delivery",
+            "title": "Instant Delivery",
+            "description": "<p>Delivered via email instantly</p>"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "calendar",
+            "title": "No Expiration",
+            "description": "<p>Never expires, use anytime</p>"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "checkmark",
+            "title": "Easy to Use",
+            "description": "<p>Simple redemption process</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

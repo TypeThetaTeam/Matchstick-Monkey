@@ -1,0 +1,682 @@
+/* ===============================================
+   Custom Mega Menu - Final Polished Version
+   Exact Match to Reference + Fully Responsive
+   FLEX (not grid)
+   =============================================== */
+
+/* Base Styles */
+.header__inline-menu {
+  display: none;
+}
+
+@media screen and (min-width: 990px) {
+  .header__inline-menu {
+    display: block;
+  }
+}
+
+.list-menu-item {
+  position: relative;
+}
+
+/* Header Menu Component */
+header-menu {
+  position: static;
+  display: block;
+}
+
+.mega-menu-trigger {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: centre;
+  gap: 0.5rem;
+}
+
+.mega-menu-trigger .icon-caret {
+  width: 1rem;
+  height: 0.8rem;
+  transition: transform 0.2s ease;
+}
+
+header-menu.is-open .icon-caret {
+  transform: rotate(180deg);
+}
+
+/* Mega Menu Content - FULL WIDTH */
+.mega-menu__content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  width: 100%;
+  z-index: 999;
+  background: #f5f1ed;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+  pointer-events: none;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 85vh;
+}
+
+.mega-menu__content.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Inner container */
+.mega-menu__inner {
+  width: 100%;
+  padding: 3rem 4rem;
+  background: #f5f1ed;
+}
+
+/* Wrapper - 2 Column Layout (FLEX) */
+.mega-menu__wrapper {
+  display: flex;
+  gap: 4rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+/* ===============================================
+   LEFT SIDE: Navigation
+   =============================================== */
+
+.mega-menu__navigation {
+  padding: 0;
+  background: transparent;
+  flex: 0 0 280px; /* fixed left column */
+}
+
+/* Navigation Heading - GREEN SERIF */
+.mega-menu__heading {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: #00b8a9;
+  margin: 0 0 1.75rem 0;
+  padding-bottom: 0;
+  border-bottom: none;
+  line-height: 1.3;
+}
+
+/* Navigation List - WITH VERTICAL LINE */
+.mega-menu__list {
+  list-style: none;
+  padding: 0 0 0 1rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.mega-menu__list-item {
+  margin: 0;
+  transition: transform 0.2s ease;
+  line-height: 1; /* Ensure proper line height for consistency */
+}
+
+.mega-menu__list-item:hover {
+  transform: translateX(3px);
+}
+
+/* Level 2 Links - Main Items */
+.mega-menu__link {
+  display: block;
+  padding: 0.5rem 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.6;
+  color: #2c2c2c;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  border-bottom: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.mega-menu__link:hover {
+  color: #666;
+}
+
+.mega-menu__link[aria-current="page"] {
+  font-weight: 600;
+  color: #000;
+}
+
+/* Sub-sub menu (Level 3) - Indented with Arrow */
+.mega-menu__sublist {
+  list-style: none;
+  padding: 0.25rem 0rem 1rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.mega-menu__sublist-item {
+  margin: 0;
+}
+
+.mega-menu__link--level-3 {
+  display: block;
+  padding: 0.3rem 0;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: #666;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.mega-menu__link--level-3:hover {
+  color: #2c2c2c;
+  padding-left: 1rem;
+}
+
+.mega-menu__link--level-3[aria-current="page"] {
+  font-weight: 600;
+  color: #000;
+}
+
+/* ===============================================
+   RIGHT SIDE: Images
+   =============================================== */
+
+.mega-menu__images {
+  display: flex;
+  gap: 2rem;
+  background: transparent;
+  justify-content: flex-start;
+
+  /* flex: 1 1 auto; fill remaining space */
+  min-width: 0;   /* prevent flex overflow issues */
+}
+
+.mega-menu__image-block {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0;
+  width: 300px;
+  background: #b8d8d8;
+  aspect-ratio: 3 / 2;
+  min-height: 350px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.mega-menu__image-block:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.mega-menu__image-link {
+  display: block;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+.mega-menu__image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #b8d8d8;
+}
+
+/* Ensure images don't break aspect ratio */
+.mega-menu__image-wrapper::before {
+  content: '';
+  display: block;
+  padding-top: 133.33%; /* 3:4 aspect ratio */
+}
+
+.mega-menu__image-wrapper img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+  will-change: transform;
+}
+
+.mega-menu__image-link:hover img {
+  transform: scale(1.05);
+}
+
+/* Image Overlay - TOP CENTRE */
+.mega-menu__image-overlay {
+  position: absolute;
+  top: 2rem;
+  left: 20px;
+  right: 0;
+  text-align: left;
+  z-index: 2;
+  color: white;
+}
+
+.mega-menu__image-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0 0 0.35rem 0;
+  line-height: 1.2;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  letter-spacing: 0.01em;
+}
+
+.mega-menu__image-subtitle {
+  font-size: 1rem;
+  margin: 0;
+  line-height: 1.4;
+  color: white;
+  text-decoration: underline;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  font-weight: 400;
+}
+
+/* Placeholder (no grid-column in flex version) */
+.mega-menu__placeholder {
+  width: 100%;
+  display: flex;
+  align-items: centre;
+  justify-content: centre;
+  padding: 3rem;
+  text-align: centre;
+  color: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.03);
+  border: 2px dashed rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+/* ===============================================
+   Header Positioning Fixes
+   =============================================== */
+
+.header-wrapper {
+  position: relative;
+  z-index: 10;
+}
+
+.section-header {
+  position: relative;
+  z-index: 10;
+}
+
+.list-menu-item:has(header-menu) {
+  position: static;
+}
+
+/* ===============================================
+   Responsive Breakpoints
+   =============================================== */
+
+/* Large Desktop (1400px - 1600px+) */
+@media screen and (min-width: 1600px) {
+  .mega-menu__inner {
+    padding: 3.5rem 5rem;
+  }
+
+  .mega-menu__wrapper {
+    gap: 5rem;
+    max-width: 1600px;
+  }
+
+  .mega-menu__navigation {
+    flex-basis: 320px;
+  }
+
+  .mega-menu__heading {
+    font-size: 1.65rem;
+  }
+
+  .mega-menu__link {
+    font-size: 1.05rem;
+  }
+
+  .mega-menu__image-block {
+    min-height: 400px;
+  }
+}
+
+/* Standard Desktop (1200px - 1400px) */
+@media screen and (min-width: 1200px) and (max-width: 1399px) {
+  .mega-menu__inner {
+    padding: 2.5rem 3rem;
+  }
+
+  .mega-menu__wrapper {
+    gap: 3.5rem;
+  }
+
+  .mega-menu__navigation {
+    flex-basis: 260px;
+  }
+}
+
+/* Medium Desktop (990px - 1199px) */
+@media screen and (min-width: 990px) and (max-width: 1199px) {
+  .mega-menu__inner {
+    padding: 2rem 2rem;
+  }
+
+  .mega-menu__wrapper {
+    gap: 2.5rem;
+  }
+
+  .mega-menu__navigation {
+    flex-basis: 240px;
+  }
+
+  .mega-menu__heading {
+    font-size: 1.35rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .mega-menu__link {
+    font-size: 0.95rem;
+  }
+
+  .mega-menu__image-block {
+    min-height: 300px;
+  }
+
+  .mega-menu__images {
+    gap: 1.5rem;
+  }
+
+  .mega-menu__image-title {
+    font-size: 1.5rem;
+  }
+
+  .mega-menu__image-subtitle {
+    font-size: 0.9rem;
+  }
+}
+
+/* Tablet & Below - Hide Mega Menu */
+@media screen and (max-width: 989px) {
+  header-menu {
+    display: none;
+  }
+
+  .mega-menu__content {
+    display: none !important;
+  }
+}
+
+/* Mobile Portrait (below 768px) */
+@media screen and (max-width: 768px) {
+  .mega-menu__content {
+    display: none !important;
+  }
+}
+
+/* Small Mobile (below 480px) */
+@media screen and (max-width: 480px) {
+  .mega-menu__content {
+    display: none !important;
+  }
+}
+
+/* ===============================================
+   Accessibility
+   =============================================== */
+
+.mega-menu__link:focus-visible {
+  outline: 2px solid #00b8a9;
+  outline-offset: 3px;
+  background: rgba(0, 184, 169, 0.05);
+  border-radius: 2px;
+}
+
+.mega-menu__link--level-3:focus-visible {
+  outline: 2px solid #00b8a9;
+  outline-offset: 2px;
+  background: rgba(0, 184, 169, 0.05);
+  border-radius: 2px;
+}
+
+.mega-menu-trigger:focus-visible {
+  outline: 2px solid #00b8a9;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.mega-menu__image-link:focus-visible {
+  outline: 3px solid white;
+  outline-offset: -8px;
+  border-radius: 4px;
+}
+
+/* Focus within mega menu */
+.mega-menu__content:focus-within {
+  outline: none;
+}
+
+/* ===============================================
+   Print Styles
+   =============================================== */
+
+@media print {
+  .mega-menu__content {
+    display: none !important;
+  }
+
+  header-menu {
+    display: none !important;
+  }
+}
+
+/* ===============================================
+   Reduced Motion Support
+   =============================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .mega-menu__content,
+  .mega-menu__image-wrapper img,
+  .mega-menu__link,
+  .mega-menu__link--level-3,
+  .mega-menu-trigger .icon-caret,
+  .mega-menu__list-item,
+  .mega-menu__image-block {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Smooth scroll behaviour */
+@media (prefers-reduced-motion: no-preference) {
+  .mega-menu__content {
+    scroll-behaviour: smooth;
+  }
+}
+
+/* ===============================================
+   High Contrast Mode
+   =============================================== */
+
+@media (prefers-contrast: high) {
+  .mega-menu__content {
+    border: 2px solid currentColor;
+  }
+
+  .mega-menu__list {
+    border-left-width: 4px;
+  }
+
+  .mega-menu__heading {
+    border-bottom: 2px solid currentColor;
+    padding-bottom: 0.5rem;
+  }
+
+  .mega-menu__link,
+  .mega-menu__link--level-3 {
+    border: 1px solid transparent;
+  }
+
+  .mega-menu__link:hover,
+  .mega-menu__link--level-3:hover {
+    border-color: currentColor;
+  }
+}
+
+/* ===============================================
+   Dark Mode Support
+   =============================================== */
+
+@media (prefers-color-scheme: dark) {
+  .mega-menu__content {
+    background: #2c2c2c;
+  }
+
+  .mega-menu__inner {
+    background: #2c2c2c;
+  }
+
+  .mega-menu__link {
+    color: #e0e0e0;
+  }
+
+  .mega-menu__link:hover {
+    color: #fff;
+  }
+
+  .mega-menu__link--level-3 {
+    color: #b0b0b0;
+  }
+
+  .mega-menu__list {
+    border-left-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .mega-menu__placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* ===============================================
+   Performance Optimisations
+   =============================================== */
+
+.mega-menu__image-block,
+.mega-menu__link,
+.mega-menu__list-item {
+  will-change: transform;
+}
+
+/* ===============================================
+   Sticky Header Support
+   =============================================== */
+
+.shopify-section-header-sticky .mega-menu__content {
+  position: fixed;
+  top: 160px;
+}
+
+.shopify-section-header-hidden .mega-menu__content {
+  display: none !important;
+}
+
+/* Adjust for announcement bars */
+body:has(.shopify-section-announcement-bar) .mega-menu__content {
+  top: calc(100% + var(--announcement-height, 0px));
+}
+
+/* ===============================================
+   Loading State
+   =============================================== */
+
+.mega-menu__image-wrapper img[loading="lazy"] {
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.mega-menu__image-wrapper img[loading="lazy"]:not([src]) {
+  opacity: 0.3;
+}
+
+/* ===============================================
+   Browser Specific Fixes
+   =============================================== */
+
+/* Safari */
+@supports (-webkit-touch-callout: none) {
+  .mega-menu__image-wrapper img {
+    transform: translateZ(0);
+  }
+}
+
+/* Firefox */
+@-moz-document url-prefix() {
+  .mega-menu__list {
+    padding-left: 1.1rem;
+  }
+}
+
+/* ===============================================
+   Additional Polish
+   =============================================== */
+
+/* Smooth hover transition for entire block */
+.mega-menu__image-block {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Ensure proper text alignment */
+li.mega-menu__list-item {
+  text-align: left;
+}
+
+/* Keep normal menu items inline */
+.list-menu--inline > .list-menu-item {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* BUT: mega menu parent should NOT be inline-flex */
+.list-menu--inline > .list-menu-item:has(header-menu) {
+  display: block;
+  position: static;
+}
+
+/* Ensure header-menu does not inherit inline flex behaviour */
+.list-menu--inline header-menu {
+  display: block;
+  width: auto;
+}

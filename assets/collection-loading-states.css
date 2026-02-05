@@ -1,0 +1,126 @@
+/* Add this CSS to your collection-main.css file */
+
+/* ==========================================================================
+   Loading States for AJAX Filtering
+   ========================================================================== */
+
+.collection-products.is-loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.collection-products.is-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 10;
+}
+
+.collection-products.is-loading::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border: 3px solid #e5e5e5;
+  border-top-color: var(--collection-primary, #333);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  z-index: 11;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Quick Add Loading State */
+.product-card__quick-add.is-loading {
+  position: relative;
+  color: transparent;
+}
+
+.product-card__quick-add.is-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  border: 2px solid #e5e5e5;
+  border-top-color: var(--collection-primary, #333);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Load More Loading State */
+.load-more-btn.is-loading {
+  position: relative;
+  color: transparent;
+}
+
+.load-more-btn.is-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Filter checkbox active state improvements */
+.filter-checkbox input:focus + .filter-checkbox__box {
+  box-shadow: 0 0 0 2px var(--collection-accent, #e8b04b);
+}
+
+/* Smooth transition for filter content */
+.filter-group__content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  padding: 0;
+}
+
+.filter-group__content.is-open {
+  max-height: 500px;
+  padding-top: 12px;
+}
+
+/* Active filter tag hover effect */
+.active-filter-tag {
+  transition: all 0.2s ease;
+}
+
+.active-filter-tag:hover {
+  background-color: var(--collection-sale, #e74c3c);
+  color: #fff;
+}
+
+.active-filter-tag:hover svg {
+  stroke: #fff;
+}
+
+/* Disabled filter styling */
+.filter-checkbox input:disabled + .filter-checkbox__box {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.filter-checkbox input:disabled ~ .filter-checkbox__label,
+.filter-checkbox input:disabled ~ .filter-checkbox__count {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -1,0 +1,195 @@
+{% comment %}
+  Color Swatches Snippet
+  Usage: {% render 'color-swatches', product: product, max_visible: 5 %}
+{% endcomment %}
+
+{% assign color_option = null %}
+{% assign color_option_index = 0 %}
+
+{% for option in product.options_with_values %}
+  {% assign option_name_downcase = option.name | downcase %}
+  {% if option_name_downcase == 'color' or option_name_downcase == 'colour' or option_name_downcase == 'colors' or option_name_downcase == 'colours' %}
+    {% assign color_option = option %}
+    {% assign color_option_index = forloop.index0 %}
+    {% break %}
+  {% endif %}
+{% endfor %}
+
+{% if color_option != null %}
+  {% assign max_swatches = max_visible | default: 0 %}
+  
+  <div class="color-swatches" data-option-index="{{ color_option_index }}" data-max-visible="{{ max_swatches }}">
+    {% for value in color_option.values %}
+      {% assign color_handle = value | handleize %}
+      {% assign swatch_file = color_handle | append: '.png' %}
+      
+      {% comment %} Find the variant for this color {% endcomment %}
+      {% assign color_variant = null %}
+      {% for variant in product.variants %}
+        {% assign variant_color = variant.options[color_option_index] %}
+        {% if variant_color == value %}
+          {% assign color_variant = variant %}
+          {% break %}
+        {% endif %}
+      {% endfor %}
+      
+      {% comment %} Determine visibility {% endcomment %}
+      {% assign is_hidden = false %}
+      {% if max_swatches > 0 and forloop.index > max_swatches %}
+        {% assign is_hidden = true %}
+      {% endif %}
+      
+      <button 
+        class="color-swatch {% if forloop.first %}is-active{% endif %}"
+        data-color="{{ value }}"
+        data-color-handle="{{ color_handle }}"
+        {% if color_variant %}
+          data-variant-id="{{ color_variant.id }}"
+          data-variant-available="{{ color_variant.available }}"
+          data-variant-price="{{ color_variant.price | money }}"
+          {% if color_variant.featured_image %}
+            data-variant-image="{{ color_variant.featured_image | image_url: width: 600 }}"
+          {% endif %}
+        {% endif %}
+        {% if is_hidden %}style="display: none;"{% endif %}
+        aria-label="Select {{ value }}"
+        title="{{ value }}"
+      >
+        {% comment %} Check for swatch image first {% endcomment %}
+        {% assign swatch_image_exists = false %}
+        {% for file in shop.files %}
+          {% if file.name == swatch_file %}
+            {% assign swatch_image_exists = true %}
+            {% break %}
+          {% endif %}
+        {% endfor %}
+        
+        <span 
+          class="color-swatch__inner"
+          style="
+            {% if swatch_image_exists %}
+              background-image: url('{{ swatch_file | file_url }}');
+            {% else %}
+              background-color: var(--swatch-{{ color_handle }}, {{ color_handle }});
+            {% endif %}
+          "
+        ></span>
+        <span class="visually-hidden">{{ value }}</span>
+      </button>
+    {% endfor %}
+    
+    {% comment %} Show "+X more" indicator {% endcomment %}
+    {% if max_swatches > 0 %}
+      {% assign remaining = color_option.values.size | minus: max_swatches %}
+      {% if remaining > 0 %}
+        <span class="color-swatch__more" data-remaining="{{ remaining }}">
+          +{{ remaining }}
+        </span>
+      {% endif %}
+    {% endif %}
+  </div>
+{% endif %}
+
+<style>
+  .color-swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  
+  .color-swatch {
+    position: relative;
+    width: 22px;
+    height: 22px;
+    padding: 2px;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    background: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .color-swatch:hover,
+  .color-swatch.is-active {
+    border-color: #333;
+  }
+  
+  .color-swatch__inner {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+  }
+  
+  .color-swatch[data-variant-available="false"] {
+    opacity: 0.4;
+  }
+  
+  .color-swatch[data-variant-available="false"]::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #666;
+    transform: rotate(-45deg);
+  }
+  
+  .color-swatch__more {
+    font-size: 11px;
+    color: #888;
+    padding-left: 4px;
+  }
+  
+  /* Default color mappings via CSS custom properties */
+  :root {
+    --swatch-red: #e74c3c;
+    --swatch-blue: #3498db;
+    --swatch-green: #27ae60;
+    --swatch-yellow: #f1c40f;
+    --swatch-orange: #e67e22;
+    --swatch-purple: #9b59b6;
+    --swatch-pink: #ff69b4;
+    --swatch-black: #1a1a1a;
+    --swatch-white: #ffffff;
+    --swatch-gray: #95a5a6;
+    --swatch-grey: #95a5a6;
+    --swatch-brown: #8b4513;
+    --swatch-beige: #f5f5dc;
+    --swatch-navy: #000080;
+    --swatch-teal: #008080;
+    --swatch-coral: #ff7f50;
+    --swatch-mint: #98ff98;
+    --swatch-lavender: #e6e6fa;
+    --swatch-gold: #ffd700;
+    --swatch-silver: #c0c0c0;
+    --swatch-cream: #fffdd0;
+    --swatch-ivory: #fffff0;
+    --swatch-tan: #d2b48c;
+    --swatch-olive: #808000;
+    --swatch-maroon: #800000;
+    --swatch-turquoise: #40e0d0;
+    --swatch-indigo: #4b0082;
+    --swatch-magenta: #ff00ff;
+    --swatch-cyan: #00ffff;
+    --swatch-lime: #00ff00;
+    --swatch-charcoal: #36454f;
+    --swatch-burgundy: #800020;
+    --swatch-rose: #ff007f;
+    --swatch-peach: #ffcba4;
+    --swatch-mustard: #ffdb58;
+    --swatch-rust: #b7410e;
+    --swatch-sage: #9dc183;
+    --swatch-plum: #8e4585;
+    --swatch-wine: #722f37;
+    --swatch-champagne: #f7e7ce;
+    --swatch-natural: #f5f5dc;
+    --swatch-multi: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #8b00ff);
+    --swatch-multicolor: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #8b00ff);
+  }
+</style>

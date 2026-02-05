@@ -5,7 +5,7 @@ Desktop: 5 columns | Tablet: 3 columns | Mobile: 2 columns + last full width
 {% endcomment %}
 
 <section class="image-category-grid">
-  <div class="container">
+  <div class="category-grid-container">
     <div class="grid">
       {% for block in section.blocks %}
         <div class="grid-item{% if forloop.last %} last-item{% endif %}">
@@ -32,25 +32,25 @@ Desktop: 5 columns | Tablet: 3 columns | Mobile: 2 columns + last full width
 
 <style>
 .image-category-grid {
-  padding: 40px 0;
+  padding: 20px 0;
 }
 
-.image-category-grid .container {
-  max-width: 1400px;
+.image-category-grid .category-grid- {
+  max-width: !00%px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 10px;
 }
 
 .image-category-grid .grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
+  gap: 0px;
 }
 
 .image-category-grid .grid-item {
   position: relative;
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: 0px;
 }
 
 .image-category-grid .category-image {
@@ -65,18 +65,18 @@ Desktop: 5 columns | Tablet: 3 columns | Mobile: 2 columns + last full width
   bottom: 15px;
   left: 50%;
   transform: translateX(-50%);
-  background: #fff;
+  background: #00c4b3;
   padding: 6px 16px;
   border-radius: 20px;
   font-size: 14px;
   font-weight: 500;
   text-decoration: none;
-  color: #000;
+  color: #fff;
   transition: all 0.3s ease;
 }
 
 .image-category-grid .category-button:hover {
-  background: #000;
+  background: #00c4b3;
   color: #fff;
 }
 

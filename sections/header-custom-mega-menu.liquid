@@ -1,0 +1,251 @@
+{% comment %}
+  Custom Mega Menu with Image Blocks
+  - Automatically loads menu items, sub-items, and sub-sub-items
+  - Displays custom image blocks based on menu item name match
+{% endcomment %}
+
+<nav class="header__inline-menu">
+  <ul class="list-menu list-menu--inline" role="list">
+    {%- for link in section.settings.menu.links -%}
+      <li class="list-menu-item">
+        {%- if link.links != blank -%}
+          <header-menu class="header__menu-item">
+            <details 
+              id="Details-HeaderMenu-{{ forloop.index }}" 
+              class="mega-menu"
+              data-menu-handle="{{ link.title | handleize }}"
+            >
+              <summary
+                id="HeaderMenu-{{ link.title | escape }}"
+                class="header__menu-item list-menu__item link focus-inset"
+              >
+                <span
+                  {%- if link.child_active %}
+                    class="header__active-menu-item"
+                  {% endif %}
+                >
+                  {{- link.title | escape -}}
+                </span>
+                <span class="icon-caret">
+                  <svg aria-hidden="true" focusable="false" class="icon icon-caret" viewBox="0 0 10 6">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor">
+                  </svg>
+                </span>
+              </summary>
+              <div
+                id="MegaMenu-Content-{{ forloop.index }}"
+                class="mega-menu__content gradient motion-reduce color-{{ section.settings.menu_color_scheme }}"
+                tabindex="-1"
+              >
+                <div class="mega-menu__wrapper page-width">
+                  {%- comment -%} Left Side: Images Block {%- endcomment -%}
+                  <div class="mega-menu__images">
+                    {%- assign menu_handle = link.title | handleize -%}
+                    {%- assign image_block_found = false -%}
+                    
+                    {%- for block in section.blocks -%}
+                      {%- if block.type == 'mega_menu_images' -%}
+                        {%- assign block_menu_handle = block.settings.menu_item | handleize -%}
+                        {%- if block_menu_handle == menu_handle -%}
+                          {%- assign image_block_found = true -%}
+                          
+                          {%- comment -%} Image 1 {%- endcomment -%}
+                          {%- if block.settings.image_1 != blank -%}
+                            <div class="mega-menu__image-item">
+                              {%- if block.settings.link_1 != blank -%}
+                                <a href="{{ block.settings.link_1 }}" class="mega-menu__image-link">
+                              {%- endif -%}
+                              
+                              <div class="mega-menu__image-wrapper">
+                                <img
+                                  src="{{ block.settings.image_1 | image_url: width: 600 }}"
+                                  srcset="{{ block.settings.image_1 | image_url: width: 300 }} 300w,
+                                          {{ block.settings.image_1 | image_url: width: 600 }} 600w"
+                                  sizes="(min-width: 990px) 300px, 200px"
+                                  alt="{{ block.settings.image_1.alt | escape }}"
+                                  loading="lazy"
+                                  width="300"
+                                  height="{{ 300 | divided_by: block.settings.image_1.aspect_ratio | round }}"
+                                >
+                              </div>
+                              
+                              {%- if block.settings.heading_1 != blank -%}
+                                <div class="mega-menu__image-content">
+                                  <h3 class="mega-menu__image-heading">{{ block.settings.heading_1 }}</h3>
+                                  {%- if block.settings.subheading_1 != blank -%}
+                                    <p class="mega-menu__image-subheading">{{ block.settings.subheading_1 }}</p>
+                                  {%- endif -%}
+                                </div>
+                              {%- endif -%}
+                              
+                              {%- if block.settings.link_1 != blank -%}
+                                </a>
+                              {%- endif -%}
+                            </div>
+                          {%- endif -%}
+                          
+                          {%- comment -%} Image 2 {%- endcomment -%}
+                          {%- if block.settings.image_2 != blank -%}
+                            <div class="mega-menu__image-item">
+                              {%- if block.settings.link_2 != blank -%}
+                                <a href="{{ block.settings.link_2 }}" class="mega-menu__image-link">
+                              {%- endif -%}
+                              
+                              <div class="mega-menu__image-wrapper">
+                                <img
+                                  src="{{ block.settings.image_2 | image_url: width: 600 }}"
+                                  srcset="{{ block.settings.image_2 | image_url: width: 300 }} 300w,
+                                          {{ block.settings.image_2 | image_url: width: 600 }} 600w"
+                                  sizes="(min-width: 990px) 300px, 200px"
+                                  alt="{{ block.settings.image_2.alt | escape }}"
+                                  loading="lazy"
+                                  width="300"
+                                  height="{{ 300 | divided_by: block.settings.image_2.aspect_ratio | round }}"
+                                >
+                              </div>
+                              
+                              {%- if block.settings.heading_2 != blank -%}
+                                <div class="mega-menu__image-content">
+                                  <h3 class="mega-menu__image-heading">{{ block.settings.heading_2 }}</h3>
+                                  {%- if block.settings.subheading_2 != blank -%}
+                                    <p class="mega-menu__image-subheading">{{ block.settings.subheading_2 }}</p>
+                                  {%- endif -%}
+                                </div>
+                              {%- endif -%}
+                              
+                              {%- if block.settings.link_2 != blank -%}
+                                </a>
+                              {%- endif -%}
+                            </div>
+                          {%- endif -%}
+                          
+                        {%- endif -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+                    
+                    {%- unless image_block_found -%}
+                      {%- comment -%} Placeholder if no images configured {%- endcomment -%}
+                      <div class="mega-menu__images-placeholder">
+                        <p>Add image blocks for "{{ link.title }}" in theme settings</p>
+                      </div>
+                    {%- endunless -%}
+                  </div>
+                  
+                  {%- comment -%} Right Side: Menu Items {%- endcomment -%}
+                  <div class="mega-menu__links">
+                    <ul class="mega-menu__list" role="list">
+                      {%- for childlink in link.links -%}
+                        <li class="mega-menu__list-item">
+                          <a
+                            href="{{ childlink.url }}"
+                            class="mega-menu__link mega-menu__link--level-2 link"
+                            {%- if childlink.current %} aria-current="page"{% endif %}
+                          >
+                            {{ childlink.title | escape }}
+                          </a>
+                          
+                          {%- if childlink.links != blank -%}
+                            <ul class="mega-menu__sublist" role="list">
+                              {%- for grandchildlink in childlink.links -%}
+                                <li class="mega-menu__sublist-item">
+                                  <a
+                                    href="{{ grandchildlink.url }}"
+                                    class="mega-menu__link mega-menu__link--level-3 link"
+                                    {%- if grandchildlink.current %} aria-current="page"{% endif %}
+                                  >
+                                    {{ grandchildlink.title | escape }}
+                                  </a>
+                                </li>
+                              {%- endfor -%}
+                            </ul>
+                          {%- endif -%}
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </details>
+          </header-menu>
+        {%- else -%}
+          <a
+            href="{{ link.url }}"
+            class="header__menu-item list-menu__item link link--text focus-inset"
+            {%- if link.current %} aria-current="page"{% endif %}
+          >
+            <span
+              {%- if link.current %}
+                class="header__active-menu-item"
+              {% endif %}
+            >
+              {{- link.title | escape -}}
+            </span>
+          </a>
+        {%- endif -%}
+      </li>
+    {%- endfor -%}
+  </ul>
+</nav>
+
+{% javascript %}
+  class HeaderMenu extends HTMLElement {
+    constructor() {
+      super();
+      this.details = this.querySelector('details');
+      this.summary = this.querySelector('summary');
+      
+      this.details.addEventListener('toggle', this.onToggle.bind(this));
+      this.summary.addEventListener('click', this.onSummaryClick.bind(this));
+      this.querySelector('button[type="button"]')?.addEventListener('click', this.close.bind(this));
+      
+      this.details.addEventListener('keyup', (event) => {
+        if (event.code.toUpperCase() === 'ESCAPE') this.close();
+      });
+    }
+
+    onToggle() {
+      if (!this.details.open) {
+        this.details.classList.remove('menu-opening');
+      }
+    }
+
+    onSummaryClick(event) {
+      event.preventDefault();
+      if (this.details.open) {
+        this.close();
+      } else {
+        this.open(event);
+      }
+    }
+
+    open(event) {
+      this.onBodyClickEvent = this.onBodyClickEvent || this.onBodyClick.bind(this);
+      event.target.closest('details').addEventListener('focusout', this.onBodyClickEvent);
+      
+      // Close other open menus
+      const headerMenus = document.querySelectorAll('header-menu');
+      headerMenus.forEach(menu => {
+        if (menu !== this && menu.querySelector('details[open]')) {
+          menu.close();
+        }
+      });
+      
+      this.details.open = true;
+      this.details.classList.add('menu-opening');
+    }
+
+    close() {
+      this.details.removeEventListener('focusout', this.onBodyClickEvent);
+      this.details.open = false;
+      this.details.classList.remove('menu-opening');
+    }
+
+    onBodyClick(event) {
+      if (!this.contains(event.target) || event.target.classList.contains('mega-menu__link')) {
+        this.close();
+      }
+    }
+  }
+
+  customElements.define('header-menu', HeaderMenu);
+{% endjavascript %}

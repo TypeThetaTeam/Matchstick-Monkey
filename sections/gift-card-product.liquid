@@ -1,0 +1,1168 @@
+{% comment %}
+  Template: templates/product.gift-card.liquid
+  This template is specifically for Shopify Gift Card products
+{% endcomment %}
+
+{% assign current_variant = product.selected_or_first_available_variant %}
+{% assign featured_image = current_variant.featured_image | default: product.featured_image %}
+
+<div class="gift-card-product-page" data-product-id="{{ product.id }}">
+  <div class="gift-card-container">
+    
+    {%- comment -%} Gift Card Image Gallery {%- endcomment -%}
+    <div class="gift-card-images">
+      <div class="main-image-wrapper">
+        <img 
+          id="main-gift-card-image"
+          src="{{ featured_image | img_url: '800x800' }}" 
+          alt="{{ product.title }}"
+          class="main-gift-card-image"
+        >
+      </div>
+      
+      {% if product.images.size > 1 %}
+      <div class="thumbnail-gallery">
+        {% for image in product.images %}
+          <button 
+            type="button"
+            class="thumbnail-btn {% if image == featured_image %}active{% endif %}"
+            data-image-id="{{ image.id }}"
+            data-image-url="{{ image | img_url: '800x800' }}"
+          >
+            <img src="{{ image | img_url: '100x100' }}" alt="{{ image.alt | escape }}">
+          </button>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    {%- comment -%} Gift Card Details & Form {%- endcomment -%}
+    <div class="gift-card-details">
+      <h1 class="product-title">{{ product.title }}</h1>
+      
+      {% if product.vendor != blank %}
+      <p class="product-vendor">{{ product.vendor }}</p>
+      {% endif %}
+
+      <div class="product-description">
+        {{ product.description }}
+      </div>
+
+      {% form 'product', product, id: 'gift-card-form', class: 'gift-card-form' %}
+        
+        {%- comment -%} Gift Card Amount Selection {%- endcomment -%}
+        <div class="variant-selector">
+          <label class="variant-label">
+            Gift Card Amount: 
+            <span class="selected-price">{{ current_variant.price | money }}</span>
+          </label>
+          
+          <div class="variant-options">
+            {% for variant in product.variants %}
+              <input 
+                type="radio" 
+                name="id" 
+                value="{{ variant.id }}" 
+                id="variant-{{ variant.id }}"
+                {% if variant == current_variant %}checked{% endif %}
+                {% unless variant.available %}disabled{% endunless %}
+                data-variant-id="{{ variant.id }}"
+                data-variant-price="{{ variant.price | money }}"
+                data-variant-image="{% if variant.featured_image %}{{ variant.featured_image | img_url: '800x800' }}{% endif %}"
+              >
+              <label 
+                for="variant-{{ variant.id }}" 
+                class="variant-btn {% unless variant.available %}disabled{% endunless %}"
+              >
+                {{ variant.title }}
+              </label>
+            {% endfor %}
+          </div>
+
+          {% if product.variants.size == 1 %}
+            <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+          {% endif %}
+        </div>
+
+        {%- comment -%} Recipient Information {%- endcomment -%}
+        <div class="recipient-section">
+          <h3 class="section-heading">Recipient Information (Optional)</h3>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="recipient-name">Recipient Name</label>
+              <input 
+                type="text" 
+                id="recipient-name" 
+                name="properties[Recipient Name]"
+                placeholder="Enter recipient's name"
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="recipient-email">Recipient Email</label>
+              <input 
+                type="email" 
+                id="recipient-email" 
+                name="properties[Recipient Email]"
+                placeholder="recipient@example.com"
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="sender-name">Your Name</label>
+            <input 
+              type="text" 
+              id="sender-name" 
+              name="properties[Sender Name]"
+              placeholder="Enter your name"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="gift-message">
+              Personal Message
+              <span class="optional-label">(Optional)</span>
+            </label>
+            <textarea 
+              id="gift-message" 
+              name="properties[Gift Message]"
+              rows="4"
+              placeholder="Add a heartfelt message to your gift card..."
+              maxlength="500"
+            ></textarea>
+            <span class="char-count">0/500</span>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="delivery-date">
+                Delivery Date
+                <span class="optional-label">(Optional)</span>
+              </label>
+              <input 
+                type="date" 
+                id="delivery-date" 
+                name="properties[Delivery Date]"
+                min="{{ 'now' | date: '%Y-%m-%d' }}"
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="delivery-time">
+                Preferred Time
+                <span class="optional-label">(Optional)</span>
+              </label>
+              <select id="delivery-time" name="properties[Delivery Time]">
+                <option value="">Select time</option>
+                <option value="Morning (8AM - 12PM)">Morning (8AM - 12PM)</option>
+                <option value="Afternoon (12PM - 5PM)">Afternoon (12PM - 5PM)</option>
+                <option value="Evening (5PM - 9PM)">Evening (5PM - 9PM)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {%- comment -%} Quantity & Add to Cart {%- endcomment -%}
+        <div class="purchase-section">
+          <div class="quantity-selector">
+            <label for="quantity">Quantity</label>
+            <div class="quantity-controls">
+              <button type="button" class="qty-btn qty-minus" aria-label="Decrease quantity">
+                <svg width="12" height="2" viewBox="0 0 12 2" fill="none">
+                  <path d="M0 1H12" stroke="currentColor" stroke-width="2"/>
+                </svg>
+              </button>
+              <input 
+                type="number" 
+                id="quantity" 
+                name="quantity" 
+                value="1" 
+                min="1" 
+                max="10"
+                class="qty-input"
+              >
+              <button type="button" class="qty-btn qty-plus" aria-label="Increase quantity">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                  <path d="M6 0V12M0 6H12" stroke="currentColor" stroke-width="2"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <button 
+            type="submit" 
+            name="add"
+            class="add-to-cart-btn"
+            {% unless current_variant.available %}disabled{% endunless %}
+          >
+            <span class="btn-text">
+              {% if current_variant.available %}
+                Add To Cart
+              {% else %}
+                Sold Out
+              {% endif %}
+            </span>
+            <span class="btn-loader">
+              <svg class="spinner" viewBox="0 0 50 50">
+                <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+              </svg>
+            </span>
+          </button>
+        </div>
+
+        <div class="success-message" style="display: none;">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="9" stroke="#155724" stroke-width="2"/>
+            <path d="M6 10L9 13L14 7" stroke="#155724" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span>Gift card added to cart!</span>
+        </div>
+
+        <div class="error-message" style="display: none;"></div>
+
+      {% endform %}
+
+      {%- comment -%} Gift Card Features {%- endcomment -%}
+      <div class="gift-card-features">
+        <div class="feature-item">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M20 12V22H4V12M2 7H22V12H2V7ZM12 22V7M12 7L8 3M12 7L16 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="feature-text">
+            <strong>Instant Delivery</strong>
+            <span>Delivered via email instantly</span>
+          </div>
+        </div>
+        
+        <div class="feature-item">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <div class="feature-text">
+            <strong>No Expiration</strong>
+            <span>Never expires, use anytime</span>
+          </div>
+        </div>
+        
+        <div class="feature-item">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <div class="feature-text">
+            <strong>Easy to Use</strong>
+            <span>Simple redemption process</span>
+          </div>
+        </div>
+      </div>
+
+      {%- comment -%} Balance Checker {%- endcomment -%}
+      <div class="balance-checker">
+        <h3 class="section-heading">Check Your Gift Card Balance</h3>
+        <p class="balance-description">Enter your gift card code to check the remaining balance</p>
+        
+        <div class="balance-form">
+          <input 
+            type="text" 
+            id="gift-card-code" 
+            placeholder="Enter gift card code"
+            class="balance-input"
+          >
+          <button type="button" id="check-balance-btn" class="check-balance-btn">
+            <span class="btn-text">Check Balance</span>
+            <span class="btn-loader">
+              <svg class="spinner-small" viewBox="0 0 50 50">
+                <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+              </svg>
+            </span>
+          </button>
+        </div>
+        
+        <div id="balance-result" class="balance-result"></div>
+      </div>
+
+    </div>
+  </div>
+
+  {%- comment -%} Additional Information Tabs {%- endcomment -%}
+  {% if product.metafields.custom.how_to_use != blank or product.metafields.custom.terms != blank %}
+  <div class="product-tabs">
+    <div class="tab-buttons">
+      {% if product.metafields.custom.how_to_use != blank %}
+      <button class="tab-btn active" data-tab="how-to-use">How to Use</button>
+      {% endif %}
+      {% if product.metafields.custom.terms != blank %}
+      <button class="tab-btn" data-tab="terms">Terms & Conditions</button>
+      {% endif %}
+    </div>
+    
+    <div class="tab-content">
+      {% if product.metafields.custom.how_to_use != blank %}
+      <div class="tab-pane active" id="how-to-use">
+        {{ product.metafields.custom.how_to_use }}
+      </div>
+      {% endif %}
+      {% if product.metafields.custom.terms != blank %}
+      <div class="tab-pane" id="terms">
+        {{ product.metafields.custom.terms }}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+.gift-card-product-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.gift-card-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  margin-bottom: 60px;
+}
+
+/* Image Section */
+.gift-card-images {
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+}
+
+.main-image-wrapper {
+  background: #f8f8f8;
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.main-gift-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 40px;
+}
+
+.thumbnail-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 10px;
+}
+
+.thumbnail-btn {
+  border: 2px solid transparent;
+  background: #f8f8f8;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 0;
+  overflow: hidden;
+  aspect-ratio: 1;
+  transition: all 0.3s ease;
+}
+
+.thumbnail-btn:hover,
+.thumbnail-btn.active {
+  border-color: #3b5998;
+}
+
+.thumbnail-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Product Details */
+.product-title {
+  font-size: 36px;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  color: #1a1a1a;
+  line-height: 1.2;
+}
+
+.product-vendor {
+  font-size: 14px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 20px;
+}
+
+.product-description {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+/* Variant Selection */
+.variant-selector {
+  margin-bottom: 30px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.variant-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #1a1a1a;
+}
+
+.selected-price {
+  font-size: 18px;
+  color: #3b5998;
+  font-weight: 700;
+}
+
+.variant-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.variant-options input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.variant-btn {
+  padding: 12px 24px;
+  border: 2px solid #e0e0e0;
+  background: #fff;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #333;
+  display: inline-block;
+}
+
+.variant-btn:hover:not(.disabled) {
+  border-color: #3b5998;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+input[type="radio"]:checked + .variant-btn {
+  background: #3b5998;
+  border-color: #3b5998;
+  color: #fff;
+}
+
+.variant-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+/* Recipient Section */
+.recipient-section {
+  margin-bottom: 30px;
+  padding: 25px;
+  background: #f9f9f9;
+  border-radius: 12px;
+}
+
+.section-heading {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 20px 0;
+  color: #1a1a1a;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #1a1a1a;
+}
+
+.optional-label {
+  font-weight: 400;
+  color: #999;
+  font-size: 12px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  background: #fff;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #3b5998;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.char-count {
+  display: block;
+  text-align: right;
+  font-size: 12px;
+  color: #999;
+  margin-top: 5px;
+}
+
+/* Purchase Section */
+.purchase-section {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.quantity-selector label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #1a1a1a;
+}
+
+.quantity-controls {
+  display: flex;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.qty-btn {
+  width: 36px;
+  height: 48px;
+  border: none;
+  background: #f8f8f8;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+}
+
+.qty-btn:hover {
+  background: #e8e8e8;
+}
+
+.qty-input {
+  width: 48px;
+  border: none;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  -moz-appearance: textfield;
+}
+
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.add-to-cart-btn {
+  width: 100%;
+  padding: 16px 32px;
+  background: #3b5998;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.add-to-cart-btn:hover:not(:disabled) {
+  background: #2d4373;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 89, 152, 0.3);
+}
+
+.add-to-cart-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.add-to-cart-btn.loading {
+  pointer-events: none;
+}
+
+.add-to-cart-btn .btn-loader {
+  display: none;
+}
+
+.add-to-cart-btn.loading .btn-text {
+  display: none;
+}
+
+.add-to-cart-btn.loading .btn-loader {
+  display: block;
+}
+
+.spinner {
+  animation: rotate 2s linear infinite;
+  width: 20px;
+  height: 20px;
+}
+
+.spinner .path {
+  stroke: #fff;
+  stroke-linecap: round;
+  animation: dash 1.5s ease-in-out infinite;
+}
+
+.spinner-small {
+  animation: rotate 2s linear infinite;
+  width: 16px;
+  height: 16px;
+}
+
+@keyframes rotate {
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
+  }
+}
+
+.success-message,
+.error-message {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.success-message {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.error-message {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Features */
+.gift-card-features {
+  display: grid;
+  gap: 15px;
+  margin-bottom: 30px;
+  padding: 25px;
+  background: #f9f9f9;
+  border-radius: 12px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.feature-item svg {
+  flex-shrink: 0;
+  color: #3b5998;
+}
+
+.feature-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.feature-text strong {
+  font-size: 14px;
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.feature-text span {
+  font-size: 13px;
+  color: #666;
+}
+
+/* Balance Checker */
+.balance-checker {
+  padding: 25px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  margin-top: 30px;
+}
+
+.balance-description {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.balance-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.balance-input {
+  padding: 12px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fff;
+}
+
+.check-balance-btn {
+  padding: 12px 24px;
+  background: #3b5998;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.check-balance-btn:hover {
+  background: #2d4373;
+}
+
+.check-balance-btn.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.check-balance-btn .btn-loader {
+  display: none;
+}
+
+.check-balance-btn.loading .btn-text {
+  display: none;
+}
+
+.check-balance-btn.loading .btn-loader {
+  display: block;
+}
+
+.balance-result {
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.balance-result.show {
+  display: block;
+}
+
+.balance-result.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.balance-result.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.balance-result.info {
+  background: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Tabs */
+.product-tabs {
+  max-width: 1000px;
+  margin: 60px auto 0;
+}
+
+.tab-buttons {
+  display: flex;
+  border-bottom: 2px solid #e0e0e0;
+  gap: 5px;
+}
+
+.tab-btn {
+  padding: 12px 24px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  color: #666;
+  transition: all 0.3s ease;
+  position: relative;
+  bottom: -2px;
+}
+
+.tab-btn:hover {
+  color: #3b5998;
+}
+
+.tab-btn.active {
+  color: #3b5998;
+  border-bottom-color: #3b5998;
+}
+
+.tab-content {
+  padding: 30px 0;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .gift-card-container {
+    gap: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .gift-card-product-page {
+    padding: 20px 15px;
+  }
+
+  .gift-card-container {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .gift-card-images {
+    position: relative;
+    top: 0;
+  }
+
+  .product-title {
+    font-size: 28px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .purchase-section {
+    grid-template-columns: 1fr;
+  }
+
+  .balance-form {
+    grid-template-columns: 1fr;
+  }
+
+  .check-balance-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .variant-options {
+    gap: 8px;
+  }
+
+  .variant-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .tab-buttons {
+    overflow-x: auto;
+  }
+
+  .tab-btn {
+    white-space: nowrap;
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('gift-card-form');
+  const variantInputs = document.querySelectorAll('input[name="id"]');
+  const selectedPriceSpan = document.querySelector('.selected-price');
+  const mainImage = document.getElementById('main-gift-card-image');
+  const thumbnails = document.querySelectorAll('.thumbnail-btn');
+  const qtyInput = document.querySelector('.qty-input');
+  const qtyMinus = document.querySelector('.qty-minus');
+  const qtyPlus = document.querySelector('.qty-plus');
+  const addToCartBtn = document.querySelector('.add-to-cart-btn');
+  const giftMessage = document.getElementById('gift-message');
+  const charCount = document.querySelector('.char-count');
+  const successMessage = document.querySelector('.success-message');
+  const errorMessage = document.querySelector('.error-message');
+  const checkBalanceBtn = document.getElementById('check-balance-btn');
+  const giftCardCodeInput = document.getElementById('gift-card-code');
+  const balanceResult = document.getElementById('balance-result');
+  const tabButtons = document.querySelectorAll('.tab-btn');
+  const tabPanes = document.querySelectorAll('.tab-pane');
+
+  // Variant selection
+  variantInputs.forEach(input => {
+    input.addEventListener('change', function() {
+      if (this.checked) {
+        const price = this.getAttribute('data-variant-price');
+        const imageUrl = this.getAttribute('data-variant-image');
+        
+        selectedPriceSpan.textContent = price;
+        
+        if (imageUrl && mainImage) {
+          mainImage.src = imageUrl;
+        }
+      }
+    });
+  });
+
+  // Thumbnail gallery
+  thumbnails.forEach(thumb => {
+    thumb.addEventListener('click', function() {
+      thumbnails.forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      
+      const imageUrl = this.getAttribute('data-image-url');
+      if (mainImage) {
+        mainImage.src = imageUrl;
+      }
+    });
+  });
+
+  // Quantity controls
+  if (qtyMinus && qtyPlus && qtyInput) {
+    qtyMinus.addEventListener('click', function() {
+      let value = parseInt(qtyInput.value);
+      if (value > 1) {
+        qtyInput.value = value - 1;
+      }
+    });
+
+    qtyPlus.addEventListener('click', function() {
+      let value = parseInt(qtyInput.value);
+      if (value < 10) {
+        qtyInput.value = value + 1;
+      }
+    });
+
+    qtyInput.addEventListener('change', function() {
+      let value = parseInt(this.value);
+      if (isNaN(value) || value < 1) {
+        this.value = 1;
+      } else if (value > 10) {
+        this.value = 10;
+      }
+    });
+  }
+
+  // Character counter
+  if (giftMessage && charCount) {
+    giftMessage.addEventListener('input', function() {
+      const count = this.value.length;
+      charCount.textContent = count + '/500';
+    });
+  }
+
+  // Form submission
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      addToCartBtn.classList.add('loading');
+      successMessage.style.display = 'none';
+      errorMessage.style.display = 'none';
+
+      const formData = new FormData(form);
+      
+      fetch('/cart/add.js', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        addToCartBtn.classList.remove('loading');
+        
+        if (data.id) {
+          successMessage.style.display = 'flex';
+          
+          // Optional: Update cart count or redirect
+          setTimeout(() => {
+            window.location.href = '/cart';
+          }, 1500);
+        } else {
+          throw new Error('Failed to add to cart');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        addToCartBtn.classList.remove('loading');
+        errorMessage.textContent = 'Error adding to cart. Please try again.';
+        errorMessage.style.display = 'flex';
+      });
+    });
+  }
+
+  // Gift card balance checker
+  if (checkBalanceBtn && giftCardCodeInput && balanceResult) {
+    checkBalanceBtn.addEventListener('click', function() {
+      const code = giftCardCodeInput.value.trim();
+      
+      if (!code) {
+        showBalanceResult('Please enter a gift card code', 'error');
+        return;
+      }
+
+      checkBalanceBtn.classList.add('loading');
+      balanceResult.classList.remove('show');
+
+      // Shopify Gift Card API endpoint
+      fetch(`/services/gift_cards/${encodeURIComponent(code)}/balance`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Gift card not found');
+          }
+          return response.json();
+        })
+        .then(data => {
+          checkBalanceBtn.classList.remove('loading');
+          
+          if (data && data.balance !== undefined) {
+            const balance = (data.balance / 100).toFixed(2);
+            const initialValue = (data.initial_value / 100).toFixed(2);
+            const currency = data.currency || 'USD';
+            
+            let message = `<strong>Current Balance:</strong> ${currency} $${balance}`;
+            if (data.initial_value) {
+              message += `<br><small>Initial Value: ${currency} $${initialValue}</small>`;
+            }
+            
+            showBalanceResult(message, 'success');
+          } else {
+            showBalanceResult('Unable to retrieve balance. Please check the code and try again.', 'error');
+          }
+        })
+        .catch(error => {
+          checkBalanceBtn.classList.remove('loading');
+          console.error('Balance check error:', error);
+          showBalanceResult('Invalid gift card code or unable to check balance. Please verify the code and try again.', 'error');
+        });
+    });
+
+    // Allow Enter key to check balance
+    giftCardCodeInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        checkBalanceBtn.click();
+      }
+    });
+  }
+
+  function showBalanceResult(message, type) {
+    balanceResult.innerHTML = message;
+    balanceResult.className = 'balance-result show ' + type;
+    
+    setTimeout(() => {
+      balanceResult.classList.remove('show');
+    }, 8000);
+  }
+
+  // Tabs functionality
+  tabButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const targetTab = this.getAttribute('data-tab');
+      
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      tabPanes.forEach(pane => pane.classList.remove('active'));
+      
+      this.classList.add('active');
+      document.getElementById(targetTab).classList.add('active');
+    });
+  });
+});
+</script>

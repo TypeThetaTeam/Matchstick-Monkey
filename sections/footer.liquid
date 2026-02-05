@@ -25,6 +25,103 @@
       padding-bottom: {{ section.settings.padding_bottom }}px;
     }
   }
+.brand-description p {
+    margin: 5px 0px 0px 0px;
+}
+.brand-description ul {
+    margin: 0px 0px 10px 0px;
+}
+
+
+          @media screen and (max-width: 749px) {
+
+
+
+            .footer-block--menu .footer-block__details-content {
+
+              max-height: 0;
+
+              overflow: hidden;
+
+              transition: max-height 0.3s ease-in-out;
+
+            }
+
+
+
+            .footer-block--menu.is-expanded .footer-block__details-content {
+
+              max-height: 250px;
+
+            }
+
+
+
+            .footer-block__details-content {
+
+              margin-bottom: 2rem;
+
+            }
+
+
+
+            /* Apply only to headings inside .footer-block--menu */
+
+            .footer-block--menu .footer-block__heading {
+
+              cursor: pointer;
+
+              position: relative;
+
+              padding-right: 40px;
+
+            }
+
+
+
+            .footer-block--menu .footer-block__heading::after {
+
+              content: "+";
+
+              position: absolute;
+
+              right: 0;
+
+              top: 20%;
+
+              transform: translateY(-50%);
+
+              font-weight: bold;
+
+            }
+
+
+
+            .footer-block--menu .footer-block__heading.active::after {
+
+              content: "-";
+
+            }
+            a.link.link--text.list-menu__item.list-menu__item--link
+
+         {
+            padding: 0px !important;
+            margin: 0px;
+        }
+      h2.footer-block__heading.inline-richtext {
+          margin: 0px !important;
+          /* font-weight: normal; */
+      }
+
+            h2.footer-block__heading.inline-richtext
+    {
+        text-align: left;
+        padding-bottom: 10px;
+    }.footer-block.grid__item.footer-block--menu {
+      margin: 10px 0px !important;
+  }
+
+          }
 {%- endstyle -%}
 
 <footer class="footer color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding">
@@ -123,15 +220,83 @@
                         </div>
                       {%- endif -%}
                       {%- if settings.brand_headline != blank -%}
-                        <h2 class="footer-block__heading rte">{{ settings.brand_headline }}</h2>
+                        <h2 class="footer-block__heading brand-heading" style="font-size: 30px;margin: 0px;font-weight: bold;">{{ settings.brand_headline }}</h2>
                       {%- endif -%}
                       {%- if settings.brand_description != blank -%}
-                        <div class="rte">{{ settings.brand_description }}</div>
+                        <div class="brand-description">{{ settings.brand_description }}</div>
                       {%- endif -%}
-                      {%- if block.settings.show_social and has_social_icons -%}
+                      {% comment %} {%- if block.settings.show_social and has_social_icons -%}
                         {%- render 'social-icons', class: 'footer__list-social' -%}
-                      {%- endif -%}
+                      {%- endif -%} {% endcomment %}
                     </div>
+                     <div class="footer-block__newsletter">
+              {%- if section.settings.newsletter_heading != blank -%}
+                <h2 class="footer-block__heading inline-richtext">{{ section.settings.newsletter_heading }}</h2>
+              {%- endif -%}
+              {%- form 'customer', id: 'ContactFooter', class: 'footer__newsletter newsletter-form' -%}
+                <input type="hidden" name="contact[tags]" value="newsletter">
+                <div class="newsletter-form__field-wrapper">
+                  <div class="field">
+                    <input
+                      id="NewsletterForm--{{ section.id }}"
+                      type="email"
+                      name="contact[email]"
+                      class="field__input"
+                      value="{{ form.email }}"
+                      aria-required="true"
+                      autocorrect="off"
+                      autocapitalize="off"
+                      autocomplete="email"
+                      {% if form.errors %}
+                        autofocus
+                        aria-invalid="true"
+                        aria-describedby="ContactFooter-error"
+                      {% elsif form.posted_successfully? %}
+                        aria-describedby="ContactFooter-success"
+                      {% endif %}
+                      placeholder="{{ 'newsletter.label' | t }}"
+                      required
+                    >
+                    <label class="field__label" for="NewsletterForm--{{ section.id }}">
+                      {{ 'newsletter.label' | t }}
+                    </label>
+                    <button
+                      type="submit"
+                      class="newsletter-form__button field__button"
+                      name="commit"
+                      id="Subscribe"
+                      aria-label="{{ 'newsletter.button_label' | t }}"
+                    >
+                      <span class="svg-wrapper">
+                        {{- 'icon-arrow.svg' | inline_asset_content -}}
+                      </span>
+                    </button>
+                  </div>
+                  {%- if form.errors -%}
+                    <small class="newsletter-form__message form__message" id="ContactFooter-error">
+                      <span class="svg-wrapper">
+                        {{- 'icon-error.svg' | inline_asset_content -}}
+                      </span>
+                      {{- form.errors.translated_fields.email | capitalize }}
+                      {{ form.errors.messages.email -}}
+                    </small>
+                  {%- endif -%}
+                </div>
+                {%- if form.posted_successfully? -%}
+                  <h3
+                    class="newsletter-form__message newsletter-form__message--success form__message"
+                    id="ContactFooter-success"
+                    tabindex="-1"
+                    autofocus
+                  >
+                    <span class="svg-wrapper">
+                      {{- 'icon-success.svg' | inline_asset_content -}}
+                    </span>
+                    {{- 'newsletter.success' | t }}
+                  </h3>
+                {%- endif -%}
+              {%- endform -%}
+            </div>
                   {%- when 'image' -%}
                     <div class="footer-block__details-content footer-block-image {{ block.settings.alignment }}">
                       {%- if block.settings.image != blank -%}
@@ -165,7 +330,7 @@
             data-cascade
           {% endif %}
         >
-          {%- if section.settings.newsletter_enable -%}
+          {% comment %} {%- if section.settings.newsletter_enable -%}
             <div class="footer-block__newsletter">
               {%- if section.settings.newsletter_heading != blank -%}
                 <h2 class="footer-block__heading inline-richtext">{{ section.settings.newsletter_heading }}</h2>
@@ -234,7 +399,7 @@
                 {%- endif -%}
               {%- endform -%}
             </div>
-          {%- endif -%}
+          {%- endif -%} {% endcomment %}
 
           {%- if shop.features.follow_on_shop? and section.settings.enable_follow_on_shop -%}
             <div class="footer__follow-on-shop">
@@ -320,6 +485,30 @@
     </div>
   </div>
 </footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+
+    const footerHeadings = document.querySelectorAll('.footer-block--menu .footer-block__heading');
+
+
+
+    footerHeadings.forEach(heading => {
+
+      heading.addEventListener('click', function () {
+
+        const parentBlock = this.closest('.footer-block--menu');
+
+        parentBlock.classList.toggle('is-expanded');
+
+        this.classList.toggle('active'); // Toggle active class for heading to change the plus/minus
+
+      });
+
+    });
+
+  });
+</script>
 
 {% schema %}
 {
@@ -543,3 +732,45 @@
   }
 }
 {% endschema %}
+
+
+
+<style>
+
+  /* Target the individual footer blocks */
+.footer__blocks-wrapper.grid--4-col-tablet .footer-block {
+  /* First column (with logo and "Join the family") - wider */
+  &:nth-child(1) {
+    width: 40% !important;
+  }
+  
+  /* Second, third, and fourth columns (Quick links) - equal width */
+  &:nth-child(2),
+  &:nth-child(3),
+  &:nth-child(4) {
+    width: 15% !important;
+  }
+}
+
+/* Responsive adjustment for tablet */
+@media screen and (max-width: 989px) {
+  .footer__blocks-wrapper.grid--4-col-tablet .footer-block {
+    &:nth-child(1) {
+      width: 100% !important;
+    }
+    
+    &:nth-child(2),
+    &:nth-child(3),
+    &:nth-child(4) {
+      width: 33.333%;
+    }
+  }
+}
+
+/* Mobile - stack everything */
+@media screen and (max-width: 749px) {
+  .footer__blocks-wrapper.grid--4-col-tablet .footer-block {
+    width: 100% !important;
+  }
+}
+</style>

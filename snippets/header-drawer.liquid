@@ -1,719 +1,541 @@
-{% comment %} Add this after the header__icons div {% endcomment %}
-{%- assign mobile_menu = section.settings.menu -%}
-{%- assign image_blocks = section.blocks | where: 'type', 'menu_images' -%}
-
-<!-- Mobile Navigation -->
-<div class="mobile-nav">
-  <div class="mobile-nav-toggle">
-    <button class="hamburger" aria-label="Toggle Menu">
-      <span class="hamburger-box">
-        <span class="hamburger-inner"></span>
-      </span>
-    </button>
-  </div>
-
-  <div class="mobile-menu-container">
-    <div class="mobile-menu-overlay"></div>
-
-    <div class="mobile-menu-wrapper">
-      <div class="mobile-menu-header">
-        <div class="mobile-logo">
-          {% if settings.logo != blank %}
-            <a href="/">
-              {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
-              {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
-              {{
-                settings.logo
-                | image_url: width: 300
-                | image_tag:
-                  class: 'header__heading-logo',
-                  width: settings.logo_width,
-                  height: logo_height,
-                  alt: logo_alt
-              }}
-            </a>
-          {% else %}
-            <a href="/">{{ shop.name }}</a>
-          {% endif %}
-        </div>
-        <button class="close-mobile-menu" aria-label="Close Menu">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-      </div>
-
-      <nav class="mobile-mega-menu">
-        <ul class="mobile-mega-menu__list">
-          {% for link in linklists[mobile_menu].links %}
-            {%- assign has_children = false -%}
-            {%- if link.links != blank -%}
-              {%- assign has_children = true -%}
-            {%- endif -%}
-
-            <li
-              class="mobile-mega-menu__item{% if has_children %} has-dropdown{% endif %}"
-              data-menu-title="{{ link.title | handleize }}"
-            >
-              <div class="mobile-menu-link-wrapper">
-                <a href="{{ link.url }}" class="mobile-mega-menu__parent-link">{{ link.title }}</a>
-                {% if has_children %}
-                  <button class="mobile-dropdown-toggle" aria-expanded="false">
-                    <svg class="icon icon-plus" width="12" height="12" viewBox="0 0 12 12">
-                      <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                    </svg>
-                    <svg class="icon icon-minus" width="12" height="12" viewBox="0 0 12 12" style="display: none;">
-                      <path d="M1 6h10" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                    </svg>
-                  </button>
-                {% endif %}
-              </div>
-
-              {% if has_children %}
-                <div class="mobile-mega-menu__dropdown">
-                  <div class="mobile-mega-menu__container">
-                    <div class="mobile-mega-menu__columns">
-                      {% for child_link in link.links %}
-                        <div class="mobile-mega-menu__column">
-                          <div class="mobile-submenu-link-wrapper">
-                            <a href="{{ child_link.url }}" class="mobile-mega-menu__subtitle">{{ child_link.title }}</a>
-                            {% if child_link.links != blank %}
-                              <button class="mobile-dropdown-toggle child-toggle" aria-expanded="false">
-                                <svg class="icon icon-plus" width="10" height="10" viewBox="0 0 10 10">
-                                  <path d="M5 1v8M1 5h8" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                                </svg>
-                                <svg
-                                  class="icon icon-minus"
-                                  width="10"
-                                  height="10"
-                                  viewBox="0 0 10 10"
-                                  style="display: none;"
-                                >
-                                  <path d="M1 5h8" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                                </svg>
-                              </button>
-                            {% endif %}
-                          </div>
-
-                          {% if child_link.links != blank %}
-                            <ul class="mobile-mega-menu__child-list">
-                              {% for grandchild_link in child_link.links %}
-                                <li class="mobile-mega-menu__grandchild">
-                                  <a href="{{ grandchild_link.url }}">{{ grandchild_link.title }}</a>
-                                </li>
-                              {% endfor %}
-                            </ul>
-                          {% endif %}
-                        </div>
-                      {% endfor %}
-                    </div>
-
-                    {% comment %} Image block rendering {% endcomment %}
-                    {%- assign menu_handle = link.title | handleize -%}
-                    {% for block in image_blocks %}
-                      {%- assign target_menu = block.settings.menu_item | handleize -%}
-                      {%- if target_menu == menu_handle -%}
-                        <div class="mobile-mega-menu__image-block">
-                          {% comment %} <h4 class="mobile-image-block-title">{{ block.settings.title | default: 'Featured' }}</h4> {% endcomment %}
-                          <div class="mobile-image-block-grid">
-                            {% for i in (1..3) %}
-                              {%- liquid
-                                assign image_key = 'image_' | append: i
-                                assign image = block.settings[image_key]
-                                assign link_key = 'link_' | append: i
-                                assign image_link = block.settings[link_key]
-                                assign text_key = 'text_' | append: i
-                                assign image_text = block.settings[text_key]
-                              -%}
-                              {% if image != blank %}
-                                <div class="mobile-mega-menu__image">
-                                  {% if image_link != blank %}<a href="{{ image_link }}" class="image-link">{% endif %}
-                                  <div class="image-wrapper">
-                                    <img
-                                      src="{{ image | img_url: '300x' }}"
-                                      alt="{{ image.alt | escape }}"
-                                      loading="lazy"
-                                      width="300"
-                                      height="{{ 300 | divided_by: image.aspect_ratio | round }}"
-                                    >
-                                  </div>
-                                  {% if image_text != blank %}
-                                    <div class="image-caption">{{ image_text }}</div>
-                                  {% endif %}
-                                  {% if image_link != blank %}</a>{% endif %}
-                                </div>
-                              {% endif %}
-                            {% endfor %}
-                          </div>
-                        </div>
-                      {%- endif -%}
-                    {% endfor %}
-                  </div>
-                </div>
-              {% endif %}
-            </li>
-          {% endfor %}
-
-          <!-- Additional mobile menu items -->
-
-          {% comment %}
-                {% if shop.customer_accounts_enabled %}
-                <li class="mobile-mega-menu__item">
-                  <a
-                    href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
-                    class="mobile-mega-menu__parent-link"
-                  >
-                    {%- liquid
-                      if customer
-                        echo 'customer.account_fallback' | t
-                      else
-                        echo 'customer.log_in' | t
-                      endif
-                    -%}
-                  </a>
-                </li>
-              {% endif %}
-
-.
-            <li class="mobile-mega-menu__item">
-              <a href="{{ routes.cart_url }}" class="mobile-mega-menu__parent-link"
-                ><span class="svg-wrapper">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" class="icon icon-cart-empty" viewBox="0 0 40 40">
-                    <path fill="currentColor" fill-rule="evenodd" d="M15.75 11.8h-3.16l-.77 11.6a5 5 0 0 0 4.99 5.34h7.38a5 5 0 0 0 4.99-5.33L28.4 11.8zm0 1h-2.22l-.71 10.67a4 4 0 0 0 3.99 4.27h7.38a4 4 0 0 0 4-4.27l-.72-10.67h-2.22v.63a4.75 4.75 0 1 1-9.5 0zm8.5 0h-7.5v.63a3.75 3.75 0 1 0 7.5 0z"></path>
-                  </svg></span
-              ></a>
-            </li>
-          {% endcomment %}
-           <li><a class="mobile-mega-menu__parent-link" href="/blogs/news">Blogs</a></li>
-           <li><a class="mobile-mega-menu__parent-link" href="/pages/faq">FAQs</a></li>
-           <li><a class="mobile-mega-menu__parent-link" href="/pages/contact">Contact</a></li>
-        </ul>
-      </nav>
-
-      <div class="mobile-menu-footer">
-        {% if section.settings.contact_info != blank %}
-          <div class="mobile-contact-info">
-            <p>{{ section.settings.contact_info }}</p>
-          </div>
-        {% endif %}
-        <div class="mobile-social-links">
-          {% if settings.social_facebook_link != blank %}
-            <a href="{{ settings.social_facebook_link }}" target="_blank" aria-label="Facebook">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-              </svg>
-            </a>
-          {% endif %}
-          {% if settings.social_instagram_link != blank %}
-            <a href="{{ settings.social_instagram_link }}" target="_blank" aria-label="Instagram">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="none"/>
-                <circle cx="12" cy="12" r="5" stroke="none"/>
-                <circle cx="18" cy="6" r="1" stroke="none"/>
-              </svg>
-            </a>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+{% comment %}
+  Custom Mobile Drawer Menu - Accordion Style with Dynamic Images
+  Usage: {% render 'header-drawer-accordion' %}
+{% endcomment %}
 
 <style>
-  /* Mobile Navigation Styles */
-  .mobile-nav {
-    position: relative;
-    z-index: 10000;
-  }
-
-  /* Mobile Menu Toggle */
-  .mobile-nav-toggle {
-    display: none;
-  }
-
-  .hamburger {
-    padding: 15px;
-    display: inline-block;
-    cursor: pointer;
-    background: transparent;
-    border: 0;
-    margin: 0;
-  }
-
-  .hamburger-box {
-    width: 30px;
-    height: 24px;
-    display: inline-block;
-    position: relative;
-  }
-
-  .hamburger-inner {
-    display: block;
-    top: 50%;
-    margin-top: -2px;
-  }
-
-  .hamburger-inner,
-  .hamburger-inner::before,
-  .hamburger-inner::after {
-    width: 20px;
-    height: 1px;
-    background-color: #333;
-    border-radius: 4px;
-    position: absolute;
-    transition-property: transform;
-    transition-duration: 0.15s;
-    transition-timing-function: ease;
-  }
-
-  .hamburger-inner::before,
-  .hamburger-inner::after {
-    content: "";
-    display: block;
-  }
-
-  .hamburger-inner::before {
-    top: -5px;
-  }
-
-  .hamburger-inner::after {
-    bottom: -5px;
-  }
-
-  /* Mobile Menu Container */
-  .mobile-menu-container {
-    position: fixed;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    z-index: 10000;
-    transition: left 0.4s ease;
-  }
-
-  .mobile-menu-container.active {
-    left: 0;
-  }
-
-  .mobile-menu-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-  }
-
-  .mobile-menu-container.active .mobile-menu-overlay {
+/* =====================================================
+   MOBILE DRAWER - ACCORDION STYLE WITH IMAGES
+   ===================================================== */
+@media screen and (max-width: 989px) {
+  .menu-drawer__navigation .submenu-open {
+    visibility: visible !important;
     opacity: 1;
-    visibility: visible;
-  }
-
-  .mobile-menu-wrapper {
-    position: absolute;
-    top: 5%;
-    left: 0;
-    width: 100%;
-    {% comment %} max-width: 400px; {% endcomment %}
-    height: 100%;
-    background: #fff;
-    overflow-y: auto;
-    z-index: 10001;
-    transform: translateX(-100%);
-    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-    display: flex;
-    flex-direction: column;
-  }
-
-  .mobile-menu-container.active .mobile-menu-wrapper {
-    transform: translateX(0);
-  }
-
-  .mobile-menu-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 15px;
-    border-bottom: 1px solid #eee;
-    background: #f9f9f9;
-  }
-
-  .close-mobile-menu {
-    background: none;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    color: #333;
-    transition: transform 0.3s ease;
-  }
-
-  .close-mobile-menu:hover {
-    transform: rotate(90deg);
-  }
-
-  /* Mobile Mega Menu Styles */
-  .mobile-mega-menu__list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    flex-grow: 1;
-  }
-
-  .mobile-mega-menu__item {
-    border-bottom: 1px solid #f5f5f5;
-  }
-
-  .mobile-menu-link-wrapper {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: background-color 0.2s;
-  }
-
-  .mobile-menu-link-wrapper:hover {
-    background-color: #f9f9f9;
-  }
-
-  .mobile-mega-menu__parent-link {
-    display: block;
-    padding: 15px 20px;
-    text-decoration: none;
-    font-weight: 500;
-    color: #333;
-    flex-grow: 1;
-    transition: color 0.2s;
-  }
-
-  .mobile-mega-menu__parent-link:hover {
-    color: #d32f2f;
-  }
-
-  .mobile-dropdown-toggle {
-    background: none;
-    border: none;
-    padding: 15px 20px;
-    cursor: pointer;
-    color: #666;
-    transition: color 0.2s;
-  }
-
-  .mobile-dropdown-toggle:hover {
-    color: #d32f2f;
-  }
-
-  .mobile-mega-menu__dropdown {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease;
-  }
-
-  .mobile-mega-menu__item.active .mobile-mega-menu__dropdown {
-    max-height: 3000px;
-  }
-
-  .mobile-mega-menu__container {
-    padding: 0 15px 15px;
-  }
-
-  .mobile-mega-menu__columns {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    padding-left: 15px;
-  }
-
-  .mobile-mega-menu__column {
-    padding: 0px 0;
-  }
-
-  .mobile-submenu-link-wrapper {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: background-color 0.2s;
-  }
-
-  .mobile-submenu-link-wrapper:hover {
-    background-color: #f9f9f9;
-  }
-
-  .mobile-mega-menu__subtitle {
-    display: block;
-    font-weight: 500;
-    color: #555;
-    text-decoration: none;
-    padding: 0px 0;
-    transition: color 0.2s;
-  }
-
-  .mobile-mega-menu__subtitle:hover {
-    color: #d32f2f;
-  }
-
-  .mobile-mega-menu__child-list {
-    list-style: none;
-    padding: 0 0 0 15px;
-    margin: 0;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-  }
-
-  .mobile-mega-menu__child-list.active {
-    max-height: 1000px;
-  }
-
-  .mobile-mega-menu__grandchild a {
-    display: block;
-    padding: 8px 0;
-    text-decoration: none;
-    color: #777;
-    font-size: 14px;
-    transition: color 0.2s;
-  }
-
-  .mobile-mega-menu__grandchild a:hover {
-    color: #d32f2f;
-    padding-left: 5px;
-  }
-
-  /* Image Block Styles for Mobile */
-  .mobile-mega-menu__image-block {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
-  }
-
-  .mobile-image-block-title {
-    font-size: 16px;
-    font-weight: 600;
-    margin: 0 0 15px 0;
-    color: #333;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
-  }
-
-  .mobile-image-block-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
-
-  .mobile-mega-menu__image {
-    position: relative;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease;
-  }
-
-  .mobile-mega-menu__image:hover {
-    transform: translateY(-3px);
-  }
-
-  .mobile-mega-menu__image img {
-    width: 100%;
     height: auto;
-    display: block;
-    transition: transform 0.5s ease;
+    pointer-events: auto;
   }
-
-  .mobile-mega-menu__image:hover img {
-    transform: scale(1.05);
+  
+  /* Ensure menu drawer has proper scroll */
+  .menu-drawer {
+    position: fixed !important;
+    top: 70px !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 90vh !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
-
-  .image-caption {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0,0,0,0.7);
-    color: white;
-    padding: 6px 10px;
-    font-size: 12px;
-    text-align: center;
+  
+  .menu-drawer__inner-container {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    transition: padding-bottom 0.3s ease !important;
+    padding-bottom: 0 !important;
   }
-
-  /* Mobile Menu Footer */
-  .mobile-menu-footer {
-    padding: 20px 15px;
-    border-top: 1px solid #eee;
-    margin-top: auto;
-    background: #f9f9f9;
+  
+  .menu-drawer__inner-container.has-images {
+    padding-bottom: 240px !important; /* Adjusted for side-by-side images */
   }
-
-  .mobile-contact-info {
-    margin-bottom: 15px;
-    font-size: 14px;
-    color: #666;
-    text-align: center;
+  
+  /* Accordion Menu Item */
+  .accordion-drawer__item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   }
-
-  .mobile-social-links {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
+  
+  /* Main Menu Summary (with arrow) */
+  .accordion-drawer__summary {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 1rem 1.5rem !important;
+    cursor: pointer !important;
+    list-style: none !important;
+    font-size: 1rem !important;
+    color: #2c2c2c !important;
+    background: transparent !important;
+    transition: background 0.2s ease !important;
   }
-
-  .mobile-social-links a {
-    color: #333;
-    transition: color 0.2s;
+  
+  .accordion-drawer__summary::-webkit-details-marker {
+    display: none !important;
   }
-
-  .mobile-social-links a:hover {
-    color: #d32f2f;
+  
+  .accordion-drawer__summary:hover {
+    background: rgba(0, 0, 0, 0.02) !important;
   }
-
-  /* Responsive Styles */
-  @media (max-width: 989px) {
-    .mobile-nav-toggle {
-      display: block;
-    }
-
-    /* Hide desktop mega menu on mobile */
-    .mega-menu {
-      display: none;
-    }
-
-    .header__icons .header__icon--account {
-      display: none;
-    }
+  
+  /* Arrow Icon */
+  .accordion-drawer__arrow {
+    width: 10px !important;
+    height: 10px !important;
+    border-right: 2px solid currentColor !important;
+    border-bottom: 2px solid currentColor !important;
+    transform: rotate(45deg) !important;
+    transition: transform 0.3s ease !important;
+    flex-shrink: 0 !important;
   }
-
-  @media (min-width: 990px) {
-    .mobile-nav {
-      display: none;
-    }
+  
+  details[open] > .accordion-drawer__summary .accordion-drawer__arrow {
+    transform: rotate(-135deg) !important;
   }
+  
+  /* Dropdown Content */
+  .accordion-drawer__content {
+    padding: 0 1.5rem 1rem !important;
+    background: rgba(0, 0, 0, 0.02) !important;
+  }
+  
+  /* Green Heading in Dropdown */
+  .accordion-drawer__heading {
+    font-family: Georgia, 'Times New Roman', serif !important;
+    font-size: 1.25rem !important;
+    font-weight: 400 !important;
+    color: #00b8a9 !important;
+    margin: 1rem 0 0.75rem 0 !important;
+    line-height: 1.3 !important;
+  }
+  
+  /* Navigation Links */
+  .accordion-drawer__nav-list {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 0 1rem 0 !important;
+  }
+  
+  .accordion-drawer__nav-item {
+    margin: 0 !important;
+  }
+  
+  .accordion-drawer__nav-link {
+    display: flex !important;
+    align-items: center !important;
+    padding: 0.6rem 0 !important;
+    color: #2c2c2c !important;
+    text-decoration: none !important;
+    font-size: 0.95rem !important;
+    min-height: 44px !important;
+    transition: color 0.2s ease !important;
+  }
+  
+  .accordion-drawer__nav-link:hover {
+    color: #00b8a9 !important;
+  }
+  
+  /* Sub-menu items (level 3) */
+  .accordion-drawer__sub-item {
+    padding-left: 1rem !important;
+  }
+  
+  .accordion-drawer__sub-summary {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 0.6rem 0 !important;
+    cursor: pointer !important;
+    list-style: none !important;
+    font-size: 0.95rem !important;
+    color: #2c2c2c !important;
+    min-height: 44px !important;
+  }
+  
+  .accordion-drawer__sub-summary::-webkit-details-marker {
+    display: none !important;
+  }
+  
+  .accordion-drawer__sub-arrow {
+    width: 8px !important;
+    height: 8px !important;
+    border-right: 2px solid currentColor !important;
+    border-bottom: 2px solid currentColor !important;
+    transform: rotate(45deg) !important;
+    transition: transform 0.3s ease !important;
+    margin-left: 0.5rem !important;
+    flex-shrink: 0 !important;
+  }
+  
+  details[open] > .accordion-drawer__sub-summary .accordion-drawer__sub-arrow {
+    transform: rotate(-135deg) !important;
+  }
+  
+  .accordion-drawer__sub-content {
+    padding-left: 1rem !important;
+  }
+  
+  .accordion-drawer__grandchild-link {
+    display: flex !important;
+    align-items: center !important;
+    padding: 0.5rem 0 !important;
+    color: #666 !important;
+    text-decoration: none !important;
+    font-size: 0.9rem !important;
+    min-height: 44px !important;
+    transition: color 0.2s ease !important;
+  }
+  
+  .accordion-drawer__grandchild-link:hover {
+    color: #00b8a9 !important;
+  }
+  
+  /* IMAGES SECTION - AT THE BOTTOM */
+  .accordion-drawer__images-container {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    background: #f5f1ed !important;
+    padding: 0.75rem !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.1) !important;
+    z-index: 9 !important;
+    display: none !important;
+    max-height: 220px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    transition: transform 0.3s ease !important;
+  }
+  
+  .accordion-drawer__images-container.active {
+    display: block !important;
+  }
+  
+  .accordion-drawer__images-wrapper {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+  }
+  
+  /* Image groups visibility */
+  .accordion-drawer__images-group {
+    display: none !important;
+    flex-direction: row !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+  }
+  
+  .accordion-drawer__images-group.active {
+    display: flex !important;
+  }
+  
+  /* Image Block - Side by Side */
+  .accordion-drawer__image-block {
+    position: relative !important;
+    overflow: hidden !important;
+    background: #a8c9cd !important;
+    height: 200px !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    border-radius: 4px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  }
+  
+  .accordion-drawer__image-link {
+    display: block !important;
+    height: 100% !important;
+    text-decoration: none !important;
+  }
+  
+  .accordion-drawer__image-wrapper {
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
+  }
+  
+  .accordion-drawer__image-wrapper img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+  }
+  
+  /* Image Overlay - TOP LEFT */
+  .accordion-drawer__image-overlay {
+    position: absolute !important;
+    top: 0.75rem !important;
+    left: 0.75rem !important;
+    right: 0.75rem !important;
+    z-index: 2 !important;
+    color: #6b7280 !important;
+    text-align: left !important;
+  }
+  
+  .accordion-drawer__image-title {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    margin: 0 0 0.25rem 0 !important;
+    color: #6b7280 !important;
+    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.5) !important;
+    line-height: 1.2 !important;
+  }
+  
+  .accordion-drawer__image-subtitle {
+    font-size: 0.75rem !important;
+    margin: 0 !important;
+    color: #6b7280 !important;
+    text-decoration: underline !important;
+    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.5) !important;
+    line-height: 1.4 !important;
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .accordion-drawer__item,
+  .accordion-drawer__images-container {
+    display: none !important;
+  }
+}
 </style>
 
+<header-drawer data-breakpoint="tablet">
+  <details id="Details-menu-drawer-container" class="menu-drawer-container">
+    <summary
+      class="header__icon header__icon--menu header__icon--summary link focus-inset"
+      aria-label="{{ 'sections.header.menu' | t }}"
+    >
+      <span>
+        {{- 'icon-hamburger.svg' | inline_asset_content -}}
+        {{- 'icon-close.svg' | inline_asset_content -}}
+      </span>
+    </summary>
+    <div id="menu-drawer" class="gradient menu-drawer motion-reduce color-{{ section.settings.menu_color_scheme }}">
+      <div class="menu-drawer__inner-container">
+        <div class="menu-drawer__navigation-container">
+          <nav class="menu-drawer__navigation">
+            <ul class="menu-drawer__menu has-submenu list-menu" role="list">
+              {%- for link in section.settings.menu.links -%}
+                <li>
+                  {%- if link.links != blank -%}
+                    {%- assign menu_handle = link.title | handleize -%}
+                    
+                    <div class="accordion-drawer__item">
+                      <details class="accordion-drawer__details" data-menu-handle="{{ menu_handle }}">
+                        <summary class="accordion-drawer__summary">
+                          <span>{{ link.title | escape }}</span>
+                          <span class="accordion-drawer__arrow"></span>
+                        </summary>
+                        
+                        <div class="accordion-drawer__content">
+                          {%- comment -%} Find and display heading {%- endcomment -%}
+                          {%- for block in section.blocks -%}
+                            {%- if block.type == 'mega_menu_images' -%}
+                              {%- assign block_menu = block.settings.menu_item | handleize -%}
+                              {%- if block_menu == menu_handle and block.settings.menu_heading != blank -%}
+                                <h3 class="accordion-drawer__heading">{{ block.settings.menu_heading }}</h3>
+                              {%- endif -%}
+                            {%- endif -%}
+                          {%- endfor -%}
+                          
+                          <ul class="accordion-drawer__nav-list">
+                            {%- for childlink in link.links -%}
+                              <li class="accordion-drawer__nav-item">
+                                {%- if childlink.links == blank -%}
+                                  <a href="{{ childlink.url }}" class="accordion-drawer__nav-link">
+                                    {{ childlink.title | escape }}
+                                  </a>
+                                {%- else -%}
+                                  <div class="accordion-drawer__sub-item">
+                                    <details class="accordion-drawer__sub-details">
+                                      <summary class="accordion-drawer__sub-summary">
+                                        <span>{{ childlink.title | escape }}</span>
+                                        <span class="accordion-drawer__sub-arrow"></span>
+                                      </summary>
+                                      <div class="accordion-drawer__sub-content">
+                                        {%- for grandchildlink in childlink.links -%}
+                                          <a href="{{ grandchildlink.url }}" class="accordion-drawer__grandchild-link">
+                                            {{ grandchildlink.title | escape }}
+                                          </a>
+                                        {%- endfor -%}
+                                      </div>
+                                    </details>
+                                  </div>
+                                {%- endif -%}
+                              </li>
+                            {%- endfor -%}
+                          </ul>
+                        </div>
+                      </details>
+                    </div>
+                    
+                  {%- else -%}
+                    <div class="accordion-drawer__item">
+                      <a href="{{ link.url }}" class="accordion-drawer__summary" style="text-decoration: none;">
+                        <span>{{ link.title | escape }}</span>
+                      </a>
+                    </div>
+                  {%- endif -%}
+                </li>
+              {%- endfor -%}
+            </ul>
+          </nav>
+        </div>
+      </div>
+      
+      {%- comment -%} IMAGES CONTAINER - FIXED AT BOTTOM {%- endcomment -%}
+      <div class="accordion-drawer__images-container" id="drawerImagesContainer">
+        <div class="accordion-drawer__images-wrapper">
+          {%- for link in section.settings.menu.links -%}
+            {%- if link.links != blank -%}
+              {%- assign menu_handle = link.title | handleize -%}
+              
+              {%- for block in section.blocks -%}
+                {%- if block.type == 'mega_menu_images' -%}
+                  {%- assign block_menu = block.settings.menu_item | handleize -%}
+                  {%- if block_menu == menu_handle -%}
+                    
+                    <div class="accordion-drawer__images-group" data-menu="{{ menu_handle }}">
+                      {%- if block.settings.image_1 != blank -%}
+                        <div class="accordion-drawer__image-block">
+                          {%- if block.settings.link_1 != blank -%}
+                            <a href="{{ block.settings.link_1 }}" class="accordion-drawer__image-link">
+                          {%- endif -%}
+                          
+                          <div class="accordion-drawer__image-wrapper">
+                            {{ block.settings.image_1 | image_url: width: 600 | image_tag: loading: 'lazy', width: 300, height: 200 }}
+                            
+                            {%- if block.settings.heading_1 != blank or block.settings.subheading_1 != blank -%}
+                              <div class="accordion-drawer__image-overlay">
+                                {%- if block.settings.heading_1 != blank -%}
+                                  <p class="accordion-drawer__image-title">{{ block.settings.heading_1 }}</p>
+                                {%- endif -%}
+                                {%- if block.settings.subheading_1 != blank -%}
+                                  <p class="accordion-drawer__image-subtitle">{{ block.settings.subheading_1 }}</p>
+                                {%- endif -%}
+                              </div>
+                            {%- endif -%}
+                          </div>
+                          
+                          {%- if block.settings.link_1 != blank -%}
+                            </a>
+                          {%- endif -%}
+                        </div>
+                      {%- endif -%}
+                      
+                      {%- if block.settings.image_2 != blank -%}
+                        <div class="accordion-drawer__image-block">
+                          {%- if block.settings.link_2 != blank -%}
+                            <a href="{{ block.settings.link_2 }}" class="accordion-drawer__image-link">
+                          {%- endif -%}
+                          
+                          <div class="accordion-drawer__image-wrapper">
+                            {{ block.settings.image_2 | image_url: width: 600 | image_tag: loading: 'lazy', width: 300, height: 200 }}
+                            
+                            {%- if block.settings.heading_2 != blank or block.settings.subheading_2 != blank -%}
+                              <div class="accordion-drawer__image-overlay">
+                                {%- if block.settings.heading_2 != blank -%}
+                                  <p class="accordion-drawer__image-title">{{ block.settings.heading_2 }}</p>
+                                {%- endif -%}
+                                {%- if block.settings.subheading_2 != blank -%}
+                                  <p class="accordion-drawer__image-subtitle">{{ block.settings.subheading_2 }}</p>
+                                {%- endif -%}
+                              </div>
+                            {%- endif -%}
+                          </div>
+                          
+                          {%- if block.settings.link_2 != blank -%}
+                            </a>
+                          {%- endif -%}
+                        </div>
+                      {%- endif -%}
+                    </div>
+                    
+                  {%- endif -%}
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+      
+    </div>
+  </details>
+</header-drawer>
+
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Mobile Menu Toggle
-    const hamburger = document.querySelector('.mobile-nav .hamburger');
-    const mobileMenuContainer = document.querySelector('.mobile-menu-container');
-    const closeMobileMenu = document.querySelector('.close-mobile-menu');
-    const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+  (function () {
+    function initMobileDrawerImages() {
+      if (!window.matchMedia('(max-width: 989px)').matches) return;
 
-    // Function to open mobile menu
-    function openMobileMenu() {
-      mobileMenuContainer.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
+      const accordionDetails = document.querySelectorAll('.accordion-drawer__details');
+      const imagesContainer = document.getElementById('drawerImagesContainer');
+      const menuInnerContainer = document.querySelector('.menu-drawer__inner-container');
+      const mainDrawer = document.getElementById('Details-menu-drawer-container');
 
-    // Function to close mobile menu
-    function closeMobileMenuFunc() {
-      mobileMenuContainer.classList.remove('active');
-      document.body.style.overflow = '';
-    }
+      if (!accordionDetails.length || !imagesContainer) return;
 
-    if (hamburger) {
-      hamburger.addEventListener('click', openMobileMenu);
-    }
+      // Prevent double-binding when section reloads
+      accordionDetails.forEach((details) => {
+        if (details.dataset.imagesBound === 'true') return;
+        details.dataset.imagesBound = 'true';
 
-    if (closeMobileMenu) {
-      closeMobileMenu.addEventListener('click', closeMobileMenuFunc);
-    }
+        details.addEventListener('toggle', function () {
+          const allImageGroups = document.querySelectorAll('.accordion-drawer__images-group');
 
-    if (mobileMenuOverlay) {
-      mobileMenuOverlay.addEventListener('click', closeMobileMenuFunc);
-    }
+          if (this.open) {
+            // Close other accordions
+            accordionDetails.forEach((other) => {
+              if (other !== this) other.open = false;
+            });
 
-    // Mobile Menu Accordion
-    const mobileDropdownToggles = document.querySelectorAll('.mobile-dropdown-toggle');
+            // Hide all image groups
+            allImageGroups.forEach((group) => group.classList.remove('active'));
 
-    mobileDropdownToggles.forEach(toggle => {
-      toggle.addEventListener('click', function() {
-        const parentItem = this.closest('.mobile-mega-menu__item');
-        const isChildToggle = this.classList.contains('child-toggle');
+            // Show images for this menu handle
+            const menuHandle = this.getAttribute('data-menu-handle');
+            const currentGroup = document.querySelector(
+              '.accordion-drawer__images-group[data-menu="' + menuHandle + '"]'
+            );
 
-        if (isChildToggle) {
-          // Toggle child list
-          const childList = this.closest('.mobile-mega-menu__column').querySelector('.mobile-mega-menu__child-list');
-          if (childList) {
-            childList.classList.toggle('active');
-
-            // Toggle icons
-            const plusIcon = this.querySelector('.icon-plus');
-            const minusIcon = this.querySelector('.icon-minus');
-
-            if (childList.classList.contains('active')) {
-              plusIcon.style.display = 'none';
-              minusIcon.style.display = 'block';
+            if (currentGroup) {
+              currentGroup.classList.add('active');
+              imagesContainer.classList.add('active');
+              if (menuInnerContainer) menuInnerContainer.classList.add('has-images');
             } else {
-              plusIcon.style.display = 'block';
-              minusIcon.style.display = 'none';
+              imagesContainer.classList.remove('active');
+              if (menuInnerContainer) menuInnerContainer.classList.remove('has-images');
             }
-          }
-        } else {
-          // Toggle main dropdown
-          parentItem.classList.toggle('active');
-
-          // Toggle icons
-          const plusIcon = this.querySelector('.icon-plus');
-          const minusIcon = this.querySelector('.icon-minus');
-
-          if (parentItem.classList.contains('active')) {
-            plusIcon.style.display = 'none';
-            minusIcon.style.display = 'block';
           } else {
-            plusIcon.style.display = 'block';
-            minusIcon.style.display = 'none';
+            // Hide images when closed
+            imagesContainer.classList.remove('active');
+            if (menuInnerContainer) menuInnerContainer.classList.remove('has-images');
+            allImageGroups.forEach((group) => group.classList.remove('active'));
           }
-
-          // Close all other dropdowns at the same level
-          const allItems = parentItem.parentElement.children;
-          Array.from(allItems).forEach(item => {
-            if (item !== parentItem) {
-              item.classList.remove('active');
-              const otherToggle = item.querySelector('.mobile-dropdown-toggle:not(.child-toggle)');
-              if (otherToggle) {
-                otherToggle.querySelector('.icon-plus').style.display = 'block';
-                otherToggle.querySelector('.icon-minus').style.display = 'none';
-              }
-            }
-          });
-        }
+        });
       });
-    });
 
-    // Close menu when clicking outside on mobile
-    document.addEventListener('click', function(event) {
-      if (mobileMenuContainer.classList.contains('active') &&
-          !event.target.closest('.mobile-menu-wrapper') &&
-          !event.target.closest('.hamburger')) {
-        closeMobileMenuFunc();
+      if (mainDrawer && mainDrawer.dataset.imagesBound !== 'true') {
+        mainDrawer.dataset.imagesBound = 'true';
+
+        // Hide images when main drawer closes
+        mainDrawer.addEventListener('toggle', function () {
+          if (!this.open) {
+            imagesContainer.classList.remove('active');
+            if (menuInnerContainer) menuInnerContainer.classList.remove('has-images');
+
+            document
+              .querySelectorAll('.accordion-drawer__images-group')
+              .forEach((group) => group.classList.remove('active'));
+            
+            // Close all accordions
+            document.querySelectorAll('.accordion-drawer__details').forEach((details) => {
+              details.open = false;
+            });
+          }
+        });
       }
-    });
+    }
 
-    // Close menu on ESC key
-    document.addEventListener('keydown', function(event) {
-      if (event.key === 'Escape' && mobileMenuContainer.classList.contains('active')) {
-        closeMobileMenuFunc();
-      }
-    });
+    // Run now or on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initMobileDrawerImages);
+    } else {
+      initMobileDrawerImages();
+    }
 
-    // Close menu when navigating
-    document.querySelectorAll('.mobile-mega-menu__parent-link, .mobile-mega-menu__subtitle, .mobile-mega-menu__grandchild a').forEach(link => {
-      link.addEventListener('click', function(e) {
-        if (!this.classList.contains('has-dropdown')) {
-          closeMobileMenuFunc();
-        }
-      });
-    });
-  });
+    // Run again when Shopify re-renders sections (theme editor)
+    document.addEventListener('shopify:section:load', initMobileDrawerImages);
+  })();
 </script>

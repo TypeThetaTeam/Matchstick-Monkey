@@ -63,6 +63,7 @@
     font-weight: {{ section.settings.heading_weight }};
     line-height: {{ section.settings.heading_line_height }};
     margin: 0;
+    text-align: center;
   }
 
   .quote-review-image-wrapper-{{ section.id }} {
@@ -81,13 +82,14 @@
 
   .quote-review-dots-{{ section.id }} {
     display: flex;
-    gap: 10px;
-    margin-top: 30px;
+    gap: 5px;
+    margin-top: 15px;
+    justify-content: center;
   }
 
   .quote-review-dot-{{ section.id }} {
-    width: 12px;
-    height: 12px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background-color: {{ section.settings.dot_inactive_color }};
     cursor: pointer;
@@ -98,7 +100,7 @@
 
   .quote-review-dot-{{ section.id }}.active {
     background-color: {{ section.settings.dot_active_color }};
-    width: 30px;
+    width: 20px;
     border-radius: 6px;
   }
 
