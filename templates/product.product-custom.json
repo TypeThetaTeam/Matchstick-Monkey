@@ -10,80 +10,244 @@
 {
   "sections": {
     "main": {
-      "type": "main-product",
+      "type": "product-custom-template",
+      "settings": {
+        "show_thumbnails": false,
+        "thumbnail_position": "bottom",
+        "show_description": true,
+        "description_heading": "Product Details",
+        "details_open": false,
+        "shipping_badge": ""
+      }
+    },
+    "additional_features_JBJVdj": {
+      "type": "additional-features",
       "blocks": {
-        "vendor": {
-          "type": "text",
+        "feature_YYjLVe": {
+          "type": "feature",
           "settings": {
-            "text": "{{ product.vendor }}",
-            "text_style": "uppercase"
+            "image": "shopify://shop_images/2025_MATCHSTICK_SUNNYMARY__113_square.jpg",
+            "heading": "Header Text",
+            "subtext": "Sub text"
           }
         },
-        "title": {
-          "type": "title",
-          "settings": {}
-        },
-        "price": {
-          "type": "price",
-          "settings": {}
-        },
-        "variant_picker": {
-          "type": "variant_picker",
+        "feature_JhzxY4": {
+          "type": "feature",
           "settings": {
-            "picker_type": "button",
-            "swatch_shape": "circle"
+            "image": "shopify://shop_images/Resizedlifestyle20205_13.png",
+            "heading": "Header Text",
+            "subtext": "Sub text"
           }
         },
-        "quantity_selector": {
-          "type": "quantity_selector",
-          "settings": {}
-        },
-        "buy_buttons": {
-          "type": "buy_buttons",
+        "feature_YTzctL": {
+          "type": "feature",
           "settings": {
-            "show_dynamic_checkout": true,
-            "show_gift_card_recipient": true
+            "image": "shopify://shop_images/Resizedlifestyle20205_11.png",
+            "heading": "Header Text",
+            "subtext": "Sub text"
           }
         },
-        "description": {
-          "type": "description",
-          "settings": {}
-        },
-        "share": {
-          "type": "share",
+        "feature_CF6kKd": {
+          "type": "feature",
           "settings": {
-            "share_label": "Share"
+            "image": "shopify://shop_images/Resized_lifestyle_20205_5.png",
+            "heading": "Header Text",
+            "subtext": "Sub text"
+          }
+        },
+        "feature_bFphxz": {
+          "type": "feature",
+          "settings": {
+            "image": "shopify://shop_images/Resized_lifestyle_20205_7.png",
+            "heading": "Header Text",
+            "subtext": "Sub text"
           }
         }
       },
       "block_order": [
-        "vendor",
-        "title",
-        "price",
-        "variant_picker",
-        "quantity_selector",
-        "buy_buttons",
-        "description",
-        "share"
+        "feature_YYjLVe",
+        "feature_JhzxY4",
+        "feature_YTzctL",
+        "feature_CF6kKd",
+        "feature_bFphxz"
       ],
+      "name": "Additional Features",
       "settings": {
-        "enable_sticky_info": true,
-        "color_scheme": "scheme-1",
-        "media_size": "large",
-        "constrain_to_viewport": true,
-        "media_fit": "contain",
-        "gallery_layout": "stacked",
-        "mobile_thumbnails": "hide",
-        "media_position": "left",
-        "image_zoom": "lightbox",
-        "hide_variants": true,
-        "enable_video_looping": false,
+        "heading": "Additional Features",
+        "heading_color": "#000000",
+        "background_color": "#ede4da"
+      }
+    },
+    "image_banner_kPWQ69": {
+      "type": "image-banner",
+      "blocks": {
+        "heading_E9irYj": {
+          "type": "heading",
+          "settings": {
+            "heading": "Image banner",
+            "heading_size": "h1"
+          }
+        },
+        "text_MpGDnM": {
+          "type": "text",
+          "settings": {
+            "text": "Give customers details about the banner image(s) or content on the template.",
+            "text_style": "body"
+          }
+        },
+        "buttons_RwDLcf": {
+          "type": "buttons",
+          "settings": {
+            "button_label_1": "Button label",
+            "button_link_1": "",
+            "button_style_secondary_1": false,
+            "button_label_2": "Button label",
+            "button_link_2": "",
+            "button_style_secondary_2": false
+          }
+        }
+      },
+      "block_order": [
+        "heading_E9irYj",
+        "text_MpGDnM",
+        "buttons_RwDLcf"
+      ],
+      "name": "t:sections.image-banner.presets.name",
+      "settings": {
+        "image_overlay_opacity": 0,
+        "image_height": "medium",
+        "image_behavior": "none",
+        "desktop_content_position": "middle-center",
+        "desktop_content_alignment": "center",
+        "show_text_box": true,
+        "color_scheme": "",
+        "stack_images_on_mobile": true,
+        "mobile_content_alignment": "center",
+        "show_text_below": true
+      }
+    },
+    "banner_heading_cjwkTq": {
+      "type": "banner-heading",
+      "name": "Banner Heading",
+      "settings": {
+        "heading": "Your Heading Here",
+        "image_desktop": "shopify://shop_images/Comparison_chart_1400x550_d11286cd-12aa-4da2-8c83-05e2436f7732.jpg",
+        "image_mobile": "shopify://shop_images/Comparison_chart_400x500_bf11fd92-e97d-4199-9865-a17d2d35eec0.jpg",
+        "alt_text": "Image description",
+        "banner_width_desktop": 60,
+        "banner_height_desktop": 600,
+        "text_size_desktop": 32,
+        "text_size_mobile": 24
+      }
+    },
+    "image_with_text_Tw6K8Q": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading_6AWBCq": {
+          "type": "heading",
+          "settings": {
+            "heading": "Image with text",
+            "heading_size": "h1"
+          }
+        },
+        "text_JgmNmw": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>",
+            "text_style": "body"
+          }
+        }
+      },
+      "block_order": [
+        "heading_6AWBCq",
+        "text_JgmNmw"
+      ],
+      "name": "t:sections.image-with-text.presets.name",
+      "settings": {
+        "image": "shopify://shop_images/2025_MATCHSTICK_WILF__47_square.jpg",
+        "height": "adapt",
+        "desktop_image_width": "medium",
+        "layout": "image_first",
+        "image_behavior": "none",
+        "content_layout": "no-overlap",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "left",
+        "section_color_scheme": "",
+        "color_scheme": "",
         "padding_top": 36,
-        "padding_bottom": 12
+        "padding_bottom": 36
+      }
+    },
+    "image_with_text_XFBtiQ": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading_tDGAP7": {
+          "type": "heading",
+          "settings": {
+            "heading": "Image with text",
+            "heading_size": "h1"
+          }
+        },
+        "text_EmeV7q": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>",
+            "text_style": "body"
+          }
+        }
+      },
+      "block_order": [
+        "heading_tDGAP7",
+        "text_EmeV7q"
+      ],
+      "name": "t:sections.image-with-text.presets.name",
+      "settings": {
+        "image": "shopify://shop_images/Resized_lifestyle_20205_10.png",
+        "height": "adapt",
+        "desktop_image_width": "medium",
+        "layout": "text_first",
+        "image_behavior": "none",
+        "content_layout": "no-overlap",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "left",
+        "section_color_scheme": "",
+        "color_scheme": "",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "text_with_image_custom_X3Bj4n": {
+      "type": "text-with-image-custom",
+      "name": "Text with Image Custom",
+      "settings": {
+        "image": "shopify://shop_images/Resizedlifestyle20205_13.png",
+        "heading": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+        "subheading": "Lorem Ipsum is simply",
+        "button_text": "Shop Now",
+        "button_link": "",
+        "button_background": "#ffffff",
+        "button_text_color": "#000000",
+        "image_position_desktop": "right",
+        "content_alignment_desktop": "center",
+        "section_height_desktop": 600,
+        "image_position_mobile": "top",
+        "content_alignment_mobile": "left",
+        "section_height_mobile": 500,
+        "heading_color": "#000000",
+        "heading_size_desktop": 48,
+        "heading_size_mobile": 28,
+        "heading_font_weight": "600",
+        "subheading_color": "#666666",
+        "subheading_size_desktop": 18,
+        "subheading_size_mobile": 16,
+        "content_background": "#5dbfbe"
       }
     },
     "related-products": {
       "type": "related-products",
+      "disabled": true,
       "settings": {
         "heading": "You may also like",
         "heading_size": "h2",
@@ -99,10 +263,46 @@
         "padding_top": 36,
         "padding_bottom": 28
       }
+    },
+    "featured_collection_PpCPtc": {
+      "type": "featured-collection",
+      "name": "t:sections.featured-collection.presets.name",
+      "settings": {
+        "collection": "6-18-months",
+        "products_to_show": 4,
+        "title": "Featured collection",
+        "heading_size": "h1",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "columns_desktop": 4,
+        "enable_desktop_slider": false,
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "solid",
+        "color_scheme": "",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
     }
   },
   "order": [
     "main",
-    "related-products"
+    "additional_features_JBJVdj",
+    "image_banner_kPWQ69",
+    "banner_heading_cjwkTq",
+    "image_with_text_Tw6K8Q",
+    "image_with_text_XFBtiQ",
+    "text_with_image_custom_X3Bj4n",
+    "related-products",
+    "featured_collection_PpCPtc"
   ]
 }
