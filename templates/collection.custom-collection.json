@@ -1,1 +1,45 @@
-{"sections":{"main":{"type":"collection-main","settings":{"custom_title":"","show_description":true,"header_image":"{{ collection.image }}","show_filters":true,"filters_expanded":true,"show_toolbar":false,"show_grid_toggle":true,"show_sort":true,"products_per_row":3,"products_per_row_mobile":"2","products_per_page":12,"pagination_type":"numbers","load_more_text":"Load More","show_promo_block":true,"promo_position":3,"promo_media_type":"video","promo_image":"shopify:\/\/shop_images\/Untitled_design_5_3cb24f8a-a309-4cae-9eec-1fdc3296ed42.png","promo_gif":"shopify:\/\/shop_images\/Untitled_design.gif","promo_video":"shopify:\/\/files\/videos\/Untitled design (1).mp4","promo_heading":"Find your child's size","promo_text":"","promo_button_text":"Size Guide","promo_link":"","show_secondary_image":true,"show_vendor":false,"show_badges":true,"show_quick_add":false,"show_color_swatches":true,"max_swatches_visible":5,"show_rating":true}}},"order":["main"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "banner": {
+      "type": "main-collection-banner",
+      "settings": {
+        "show_collection_description": true,
+        "show_collection_image": false,
+        "color_scheme": "scheme-1"
+      }
+    },
+    "product-grid": {
+      "type": "main-collection-product-grid",
+      "settings": {
+        "products_per_page": 16,
+        "columns_desktop": 4,
+        "columns_mobile": "2",
+        "color_scheme": "scheme-1",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "enable_filtering": true,
+        "filter_type": "vertical",
+        "enable_sorting": true,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    }
+  },
+  "order": [
+    "banner",
+    "product-grid"
+  ]
+}
